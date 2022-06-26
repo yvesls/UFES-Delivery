@@ -1,0 +1,147 @@
+/* Configuração padrão da página
+		-------------------------------*/
+		@font-face {
+			font-family: roboto;
+			src: url(fontes/Roboto-Regular.ttf);
+		}
+		
+		* {
+			font-family: roboto;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			margin: 0;
+			color: #7F6898;
+			height: auto;
+			overflow-x: hidden;
+		}
+
+		header {
+			position: fixed;
+			top: 0;
+			height: 20vh;
+			background: white;
+		}
+
+		::-webkit-scrollbar-track {
+			background-color: whitesmoke;
+		}
+		
+		::-webkit-scrollbar {
+			width: 8px;
+			background-color: #04032c;
+		}
+		
+		::-webkit-scrollbar-thumb {
+			background: linear-gradient(to bottom, #015db3, #0574db); 
+		}
+
+		.link-menu {
+			color: black;
+			padding: 5px 20px;
+			border-radius: 15px;
+			width: 20%;
+			text-align: center;
+		}
+
+		.link-menu:hover, .active {
+			color: #015db3;
+			text-decoration: none;
+		}
+
+		.usuario-data {
+			position: absolute;
+			top: 8vh;
+		}
+
+		.icons, .icons-sacola {
+			width: 20px;
+			border-radius: 50%;
+			background-color: #c7c7c7;
+			user-select: none;
+		}
+
+		.icons:hover {
+			background-color: #777777;
+		}
+
+		.icons-sacola {
+			width: 45px;
+			border-radius: 10px;
+			padding: 5px 15px;
+			background-color: #25cc25;
+		}
+
+		.icons-sacola:hover {
+			background-color: #1ca01c;
+		}
+
+		.icons-pagamento {
+			width: 1em;
+		}
+
+		.user, .usuario {
+			color: #ffffff;
+			
+		}
+
+		.usuario {
+			background-color: #777777;
+			border-radius: 5px 0px 0px 5px;
+			font-weight: 600;
+			letter-spacing: 1px;
+		}
+
+		.user {
+			background-color: #919191;
+			border-radius: 0px 5px 5px 0px;
+		}
+
+		.data {
+			color: #979797;
+			background-color: #ececec;
+			border-radius: 5px;
+		}
+
+		.tr-desc {
+			color: #77777700;
+		}
+
+		.container-middle {
+			height: 60vh;
+			position: fixed;
+			top: 20vh;
+			overflow-y: scroll;
+			width: 100%;
+		}
+
+		.container-bottom {
+			position: fixed;
+			bottom: 0;
+			height: 20vh;
+			background: white;
+		}
+
+		/* não funcionando */
+
+		.n-funcioando {
+			color: #777777;
+			font-size: 2em;
+			padding: 50px;
+		}
+
+		#some{
+			display: none;
+		}
+
+		#requisitoPagar {
+			text-align: center;
+			top: 6vh;
+			right: 1vw;
+		}
+
+		.text-end{
+			text-align: end;
+		}

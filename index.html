@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Realizar pedido</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="realizar pedido/estilo.css" type="text/css">
+    <link href="/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet">
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	</head>
+	<body>
+    <header class="w-100">
+      <div class=" d-flex justify-content-around mt-3">
+        <a href="#" class="link-menu active">Realizar Pedido</a>
+        <a href="#" class="link-menu">Visualizar Pedido</a>
+        <a href="#"><img src="realizar pedido/imagens/logo.png" alt=""></a>
+        <a href="#" class="link-menu">Link provisório 1</a>
+        <a href="#" class="link-menu">Link provisório 2</a>
+      </div>
+      
+      <!-- Dados primários (que aparecerão primeiro) -->
+      <div class="usuario-data d-flex w-100 justify-content-between">
+        <!-- em nome do usuário vai como exemplo: João Silva. Local de inserção dinâmica -->
+        <div class=" p-3 m-3"><span class="usuario px-3 py-3">Usuário</span><span id="nomeUsuario" class="user px-3 py-3">Nome do usuário</span></div>
+        <!-- local de inserção dinâmica -->
+        <div class=" p-3 m-3"><span class="data px-3 py-3">Data: <span id="dataEHora"></span></span></div>
+      </div>
+    </header>
+
+    <!-- Container da tabela de produtos -->
+    <section class="container-middle px-5 py-3 text-center tabela-produtos">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Quantidade</th>
+            <th scope="col">Categoria</th>
+            <th scope="col">Valor unitário</th>
+            <th scope="col">Valor total do item</th>
+            <th scope="col">Adicionar a sacola</th>
+          </tr>
+        </thead>
+        <tbody id="produtosTbody">
+
+          
+        </tbody>
+      </table>
+      <!-- Exibir apenas se o delivery não estiver funcionando -->
+      <div id="nFunHorarioEDia" style="display: none;">
+        <div class="n-funcioando d-flex justify-content-center flex-column text-center">
+          <div class="">Lamento mas não estamos funcionando no momento.</div>
+          <div class=" font-italic">Funcionamos de Terça a Domingo das 15:00 às 23:59.</div>
+        </div>
+      </div>
+      
+      <div id="nFunPersonalizado" style="display: none;">
+        <div class="n-funcioando d-flex justify-content-center flex-column text-center">
+          <div class="">Lamento mas não estamos funcionando no momento.</div>
+          <div id="nFMotivo" class="font-italic"></div>
+        </div>
+      </div>
+
+      <div id="qtdZerada" style="display: none;">
+        <div class="n-funcioando d-flex justify-content-center flex-column text-center">
+          <div class="">Lamento mas não há produtos em estoque no momento.</div>
+          <div class=" font-italic">Volte mais tarde.</div>
+        </div>
+      </div>
+      
+      <div id="erroAoCarregarProdutos" style="display: none;">
+        <div class="n-funcioando d-flex justify-content-center flex-column text-center">
+          <div class="">Ocorreu um erro inesperado ao carregar a página.</div>
+          <div class=" font-italic">Por favor, Volte mais tarde.</div>
+        </div>
+      </div>
+
+      <div id="carregandoProdutos" style="display: none;">
+        <div class="n-funcioando d-flex justify-content-center flex-column text-center">
+          <div class="">Carregando ...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Container com tabela de desconto, botão de cadastro de endereço e botão de pagamento -->
+    <section class="container-bottom w-100 d-none align-items-center">
+
+      <div class="col-8 px-5 pt-3 m-0 text-center">
+        <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th scope="col">Desconto</th>
+              <th scope="col">%</th>
+              <th id="vlTotalSDesc" scope="col">Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Local de inserção dinâmica de descontos (dados inseridos até o momento meramente ilustrativos) -->
+            <tr>
+              <td id="tipoDesconto"></td>
+              <td id="desconto"></td>
+              <td id="totalAPagar"></td>
+            </tr>
+            <!-- Linha delimitante indicando o final da tabela -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- div com botões -->
+      <div class="col-4 mx-auto d-flex justify-content-around">
+        <!-- botão que ativa o modal cadastrar endereço -->
+        <button id="bottonCadastrarEnd" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modalEndereco">Cadastrar endereço</button>
+        <button id="buttonPagar" type="button" class="btn btn-dark">Pagar</button>
+        <small id="requisitoPagar" class="text-danger position-absolute"></small>
+      </div>
+      
+      <div id="modalFazerPagamento"></div>
+      
+    </section>
+        
+        <!-- Modal - Cadastrar endereço -->
+        <div class="modal fade" id="modalEndereco" tabindex="-1" role="dialog" aria-labelledby="modalEnderecoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalEnderecoTitle">Cadastrar endereço</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputPassword4">Endereço</label>
+                      <input type="text" class="form-control" id="endereco" placeholder="Rua 1, 123">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="complemento">Complemento</label>
+                    <input type="text" class="form-control" id="complemento" placeholder="Ao lado da Praça 1">
+                  </div>
+                  <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" class="form-control" id="bairro" placeholder="Alto Universitário">
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label for="inputCidade">cidade</label>
+                      <input type="text" class="form-control" id="inputCidade" placeholder="Alegre">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="inputEstado">Estado</label>
+                      <select id="inputEstado" class="form-control">
+                        <option selected>Estado...</option>
+                        
+                      </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                      <label for="inputCep">CEP</label>
+                      <input type="text" class="form-control" id="inputCep" placeholder="29500-000">
+                    </div>
+                  </div>
+                  <p id="camposObrigatorios" class="text-danger"></p>
+                  <div class="modal-footer">
+                    <button id="buttonEndereco" type="button" class="btn btn-primary">Cadastrar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div> 
+
+        <!-- Modal - Erro ao adicionar (botão verde) -->
+        <div class="modal fade" id="naoadicionado" tabindex="-1" role="dialog" aria-labelledby="naoadicionadoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="naoadicionadoTitle">Falha ao adicionar à sacola</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Desculpe, a quantidade que você pediu deste item não tem em estoque.<br>
+                <!-- neste span ficará a quantidade de itens, deste produto pedido, em estoque -->
+                <em>Quantidade em estoque: <span id="qtdEstoqueModal">0</span></em>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Escolher outra opção</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+          <!-- Modal - Adicionado com sucesso (botão verde) -->
+          <div class="modal fade" id="adicionadocomsucesso" tabindex="-1" role="dialog" aria-labelledby="adicionadocomsucessoTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="adicionadocomsucessoTitle">Pedido adicionado à sacola</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Seu pedido foi adicionado na sua sacola.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- Modal - Cadastrado com sucesso (botão cadastrar) -->
+        <div class="modal fade" id="cadastradocomsucesso" tabindex="-1" role="dialog" aria-labelledby="cadastradocomsucessoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-success" id="cadastradocomsucessoTitle">Cadastrado com sucesso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                O botão cadastrar não será exibido novamente, mas poderá editar ou adicionar outros endereços em configurações.
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal - Fazer pagamento do pedido -->
+        <div class="modal fade" id="fazerPagamento" tabindex="-1" role="dialog" aria-labelledby="fazerPagamentoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content border border-dark">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="fazerPagamentoTitle">Pagamento</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div id="pagamentoEndereco" class="mb-3">
+                  <h4>Endereço de entrega</h4>
+                  <b>Fulano de Tal</b>, <b>telefone: <span>(28) 99999-9991</span></b><br>
+                  <span>Alto Universitário</span>, <span>S/N</span><br>
+                  <span>Departamento de Computação - UFES Alegre - ES</span><br>
+                  Ponto de Referência:<span> primeiro andar do prédio Central em frente ao ginásio.</span>
+                </div>
+                <table class="table text-center">
+                  <thead>
+                    <tr>
+                      <th scope="col">Item</th>
+                      <th scope="col">Quantidade</th>
+                      <th scope="col">Categoria</th>
+                      <th scope="col">Valor unitário</th>
+                      <th scope="col">Valor total do item</th>
+                    </tr>
+                  </thead>
+                  <tbody id="produtosPagamento">
+          
+                    <!-- Local de inserção da lista de produtos dinâmica (dados preenchidos até o momento apenas para visualização. Exibir apenas se o delivery estiver funcionando) -->
+                    
+                    <!-- Linha delimitante indicando o final da tabela -->
+                    <tr>
+                      <td></td><td></td><td></td><td></td><td></td><td></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="d-flex justify-content-around align-items-center col-12">
+                  <div class="col-6 p-3">
+                    Método de pagamento: 
+                    <span class="dropdown">
+                      <button class="btn btn-white text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Mercado Pago
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Mercado Pago</a>
+                      </div>
+                    </span>
+                  </div>
+                  <div class="col-6 p-3 text-end">
+                    Subtotal de produtos: R$ <span id="totalAPagarPagamento">  </span> <br>
+                    Frente: <span id="fretePagamento">R$ 0,00</span> <br>
+                    Descontos: <span><span id="descontoPagamento"> </span id="valorDescontoPagamento"></span> <br>
+                    <br>
+                    Valor a pagar: <h2 id="totalAPagarCDescontoPagamento"></h2>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button id="encomendarPedido" type="button" class="btn btn-secondary col-2 m-3">Pagar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+         <!-- Modal - Resumo do pedido -->
+        <div class="modal fade" id="resumoPedido" tabindex="-1" role="dialog" aria-labelledby="resumoPedidoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="resumoPedidoTitle">Resumo do pedido</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  
+                  <div class="m-4 d-flex">
+                    <div class="col-1 text-center py-3">
+                      <img class="icons-pagamento" src="realizar pedido/imagens/truck-solid.svg" />
+                    </div>
+                    <div class="col-9 float-left">
+                       <h4 class="p-0 m-0">Entrega no seu endereço</h4>
+                      <b>Fulano de Tal</b>, <b>telefone: <span>(28) 99999-9991</span></b><br>
+                      <span>Alto Universitário</span>, <span>S/N</span><br>
+                      <span>Departamento de Computação - UFES Alegre - ES</span><br>
+                      Ponto de Referência:<span> primeiro andar do prédio Central em frente ao ginásio.</span>
+                    </div>
+                  </div>
+                 
+                  <div class="m-4 d-flex">
+                    <div class="col-1 text-center">
+                      <img class="icons-pagamento" src="realizar pedido/imagens/coins-solid.svg" />
+                    </div>
+                    <div class="col-9 float-left">
+                      <b>Você pagou R$ <span>95,00</span> com <span>Mercado Pago</span>.</b>
+                    </div>
+                  </div>
+
+                  <div class="m-4 d-flex">
+                    <div class="col-1 text-center">
+                      <img class="icons-pagamento" src="realizar pedido/imagens/arrow-alt-circle-left-regular.svg" />
+                    </div>
+                    <div class="col-9 float-left">
+                      <a href="#" class="text-dark">
+                        <b>Você poderá cancelar o pedido antes que ele seja preparado para envio.</b>
+                      </a>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal - erro ao realizar pagamento do pedido -->
+        <div class="modal fade" id="erroPagamento" tabindex="-1" role="dialog" aria-labelledby="erroPagamentoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="erroPagamentoTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  
+                  <div class="m-2">
+                    <h3>Pagamento não foi realizado</h3>
+                    <br>
+                    <p>Houve uma falha ao processar o pagamento.</p>
+                    <p>Entre em contato com o mercado pago e/ou tente novamente mais tarde.</p>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    
+    <script language="javascript" src="jquery-3.6.0.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="realizar pedido/realizarpedido.js"></script>
+  </body>
+</html>

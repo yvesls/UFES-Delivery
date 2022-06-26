@@ -1,0 +1,132 @@
+
+		@font-face {
+			font-family: roboto;
+			src: url(fontes/Roboto-Regular.ttf);
+		}
+		
+		* {
+			font-family: roboto;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			margin: 0;
+			color: #7F6898;
+			height: auto;
+			overflow-x: hidden;
+		}
+
+		header{
+			background-color: #acacac;
+		}
+
+		.link-menu {
+			color: black;
+			padding: 5px 20px;
+			border-radius: 15px;
+		}
+
+		.link-menu:hover, .active {
+			background-color: #777777;
+			color: #ffffff;
+			text-decoration: none;
+		}
+
+		.icons {
+			width: 20px;
+			border-radius: 50%;
+			background-color: #c7c7c7;
+		}
+
+		.icons-sacola {
+			width: 45px;
+			border-radius: 10px;
+			padding: 5px 15px;
+			background-color: #a5a5a5;
+		}
+
+		.user, .usuario {
+			color: #ffffff;
+			
+		}
+
+		.usuario {
+			background-color: #777777;
+			border-radius: 5px 0px 0px 5px;
+			font-weight: 600;
+			letter-spacing: 1px;
+		}
+
+		.user {
+			background-color: #919191;
+			border-radius: 0px 5px 5px 0px;
+		}
+
+		.tr-desc {
+			color: #77777700;
+		}
+
+		/* não funcionando */
+
+		.n-funcioando {
+			color: #777777;
+			font-size: 2em;
+			padding: 50px;
+		}
+
+		/*consultar pedidos*/
+		
+		.janela-detalhes {
+			padding: 20px;
+			background-color: white;
+			width: 60vw;
+			border: 3px solid #777777;
+			border-radius: 5px;
+			margin-bottom: 10px;
+			/* position: absolute;
+			right: 27%;
+			top: 32%; */
+		}
+
+		.filtro {
+			position: relative;
+		}
+
+		#check-situacao {
+			text-align: center;
+			border: 1px solid gray;
+			border-radius: 5px;
+			padding: 5px;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		#check-situacao:active {
+			position: relative;
+			top: 1px;
+		}
+
+		#check-situacao:hover {
+			color: white;
+			background-color: #838282;
+		}
+
+		#icon-situacao, #icon-situacao-2 {
+			margin-left: 10px;
+			width: 12px;
+		}
+
+		#icon-situacao-2{
+			display: none;
+		}
+
+		.select-checks {
+			background-color: #e2e2e2;
+			position: absolute;
+			top: 36px;
+			border: 1px solid #777777;
+			border-radius: 5px;
+			padding: 10px;
+			display: none;
+		}
