@@ -1,20 +1,29 @@
-const template_url = "http://34.125.171.237:5000"
+$(document).ready(function(){    
 
-const request = (url, tipo, conteudo) => {
-    const request = new XMLHttpRequest()
+    const template_url = "http://127.0.0.1:5000"
 
-    const is_post = (tipo.toUpperCase() === "POST")
+    const request = (url, tipo, conteudo) => {
+        const request = new XMLHttpRequest()
 
-    request.open(tipo, `${template_url}${url}`, is_post)
-    request.setRequestHeader("Content-type", "application/json");
-    request.send(is_post ? JSON.stringify(conteudo) : null)
+        const is_post = (tipo.toUpperCase() === "POST")
 
-    console.log(tipo, url, is_post, JSON.stringify(conteudo));
+        request.open(tipo, `${template_url}${url}`, is_post)
+        request.setRequestHeader("Content-type", "application/json");
+        request.send(is_post ? JSON.stringify(conteudo) : null)
 
-    return request;
-}
+        //console.log(tipo, url, is_post, JSON.stringify(conteudo));
+        request.onreadystatechange = () => {
+            if(request.readyState == 4 && request.status == 200) {
+                
+                return request;
+            }else {
+                return request.response;
+            }
+        }
+        
+    }
 
-const load = () => {
+
     // console.log(request("/product/get/all", "get"));
 
     // console.log(request("/city/new", "post", {
@@ -30,7 +39,7 @@ const load = () => {
     //     nu_cep: "29500-000",
     //     ds_complemento: "Próximo à praça 22"
     // }));
-    
+        
     // console.log(request("/user/new", "post", {
     //     cd_endereco: 1,
     //     email_usuario: "lucio.pena@gmail.com",
@@ -41,12 +50,12 @@ const load = () => {
     //     senha_adm: null
     // }));
 
-    // console.log(request("/user/get/address", "post", {
-    //     cd_usuario: 3,
-    //     ds_email: "lucio.pena@gmail.com",
-    //     cd_senha: "12345678",
-    //     cd_token: null
-    // }))
-}
+    const resposta = request("/product/get/all", "get")
 
-load()
+    console.log(resposta)
+    
+
+})
+
+
+
