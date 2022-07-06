@@ -17,9 +17,9 @@
       <div class=" d-flex justify-content-around mt-3">
         <a href="#" class="link-menu active">Realizar Pedido</a>
         <a href="#" class="link-menu">Visualizar Pedido</a>
-        <a href="#"><img src="realizar pedido/imagens/logo.png" alt=""></a>
-        <a href="#" class="link-menu">Link provisório 1</a>
-        <a href="#" class="link-menu">Link provisório 2</a>
+        <a href="#"><img src="realizar pedido/imagens/logo.png" alt="UFES Delivery"></a>
+        <a href="#" class="link-menu" data-toggle="modal" data-target="#cancelamentoDoPedido"></a>
+        <a href="#" class="link-menu">Avaliar atendimento</a>
       </div>
       
       <!-- Dados primários (que aparecerão primeiro) -->
@@ -115,9 +115,8 @@
       </div>
 
       <!-- div com botões -->
-      <div class="col-4 mx-auto d-flex justify-content-around">
+      <div class="col-3 mx-auto d-flex justify-content-end">
         <!-- botão que ativa o modal cadastrar endereço -->
-        <button id="bottonCadastrarEnd" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#modalEndereco">Cadastrar endereço</button>
         <button id="buttonPagar" type="button" class="btn btn-dark">Pagar</button>
         <small id="requisitoPagar" class="text-danger position-absolute"></small>
       </div>
@@ -125,59 +124,6 @@
       <div id="modalFazerPagamento"></div>
       
     </section>
-        
-        <!-- Modal - Cadastrar endereço -->
-        <div class="modal fade" id="modalEndereco" tabindex="-1" role="dialog" aria-labelledby="modalEnderecoTitle" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalEnderecoTitle">Cadastrar endereço</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <form>
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="inputPassword4">Endereço</label>
-                      <input type="text" class="form-control" id="endereco" placeholder="Rua 1, 123">
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="complemento">Complemento</label>
-                    <input type="text" class="form-control" id="complemento" placeholder="Ao lado da Praça 1">
-                  </div>
-                  <div class="form-group">
-                    <label for="bairro">Bairro</label>
-                    <input type="text" class="form-control" id="bairro" placeholder="Alto Universitário">
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-6">
-                      <label for="inputCidade">cidade</label>
-                      <input type="text" class="form-control" id="inputCidade" placeholder="Alegre">
-                    </div>
-                    <div class="form-group col-md-4">
-                      <label for="inputEstado">Estado</label>
-                      <select id="inputEstado" class="form-control">
-                        <option selected>Estado...</option>
-                        
-                      </select>
-                    </div>
-                    <div class="form-group col-md-2">
-                      <label for="inputCep">CEP</label>
-                      <input type="text" class="form-control" id="inputCep" placeholder="29500-000">
-                    </div>
-                  </div>
-                  <p id="camposObrigatorios" class="text-danger"></p>
-                  <div class="modal-footer">
-                    <button id="buttonEndereco" type="button" class="btn btn-primary">Cadastrar</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div> 
 
         <!-- Modal - Erro ao adicionar (botão verde) -->
         <div class="modal fade" id="naoadicionado" tabindex="-1" role="dialog" aria-labelledby="naoadicionadoTitle" aria-hidden="true">
@@ -220,26 +166,6 @@
               </div>
             </div>
           </div>
-
-        <!-- Modal - Cadastrado com sucesso (botão cadastrar) -->
-        <div class="modal fade" id="cadastradocomsucesso" tabindex="-1" role="dialog" aria-labelledby="cadastradocomsucessoTitle" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-success" id="cadastradocomsucessoTitle">Cadastrado com sucesso</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                O botão cadastrar não será exibido novamente, mas poderá editar ou adicionar outros endereços em configurações.
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Modal - Fazer pagamento do pedido -->
         <div class="modal fade" id="fazerPagamento" tabindex="-1" role="dialog" aria-labelledby="fazerPagamentoTitle" aria-hidden="true">
