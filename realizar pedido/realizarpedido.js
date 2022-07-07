@@ -1,4 +1,4 @@
-  $(document).ready(() => {
+$(document).ready(() => {
 
    
     const template_url = "http://127.0.0.1:5000"
@@ -13,7 +13,7 @@
         request.setRequestHeader("Content-type", "application/json");
         request.send(is_post ? JSON.stringify(conteudo) : null)
         
-        return is_post ? 1 : JSON.parse(request.response).result;
+        return is_post ? request : JSON.parse(request.response).result;
         //console.log(tipo, url, is_post, JSON.stringify(conteudo));
         request.onreadystatechange = () => {
             if(request.readyState == 4 && request.status == 200) {
@@ -31,11 +31,11 @@
         let tipoUsuario, nomeUsuario, enderecoUsuario;
 
         // tratativa para verificar se o usuário está logado
-        await fazerReq("/user/get/client/1", 'GET').then((dadosUsuario)=>{
+        await fazerReq("/user/get/client/2", 'GET').then((dadosUsuario)=>{
             //console.log(dadosUsuario)
             tipoUsuario = dadosUsuario.cd_tipo_usuario;
 
-            if(tipoUsuario == 4){
+            if(tipoUsuario == 1){
                 nomeUsuario = dadosUsuario.no_usuario;
                 document.getElementById("nomeUsuario").innerHTML = nomeUsuario;
 
@@ -318,8 +318,27 @@
                                 document.getElementById("vlTotalSDesc").innerHTML = "Valor Total Sem Desconto";
                                 vlTotalCDesc = vlTotalSDesc
                             }
-                            
                         }
+
+                        async function getEndereco(){
+                            let usuario = {
+                                "cd_usuario":dadosUsuario.cd_usuario,
+                                "ds_email":'LUCIO.PENA@GMAIL.COM',
+                                "cd_senha":12345678,
+                                "cd_token": null
+                            }
+                            await fazerReq("/user/get/address", 'POST', usuario).then((endereco)=>{
+                                
+                                console.log(endereco)
+
+                                // document.getElementById("nomeNoEndereco").innerHTML = dadosUsuario.no_usuario
+                                // document.getElementById("logradouroEndereco").innerHTML = endereco.no_logradouro
+                                // document.getElementById("bairroEndereco").innerHTML = endereco.no_bairro
+                                // document.getElementById("cidadeEndereco").innerHTML = endereco.no_cidade
+                                // document.getElementById("numEndereco").innerHTML = endereco.ds_numero
+                                // document.getElementById("complementonumEndereco").innerHTML = endereco.ds_complemento
+                            });
+                        }getEndereco()
 
                         $(document.getElementById("encomendarPedido")).on("click", encomendarPedido);
                     
@@ -331,7 +350,7 @@
 
                                 let jsonPedido = {"cd_usuario": dadosUsuario.cd_usuario}
                                 console.log(jsonPedido.toString())
-                                await fazerReq("/order/new/", "POST", jsonPedido).then(()=>{
+                                await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
                                     let modalSucesso = document.getElementById("encomendarPedido");
                                     $(modalSucesso).attr("data-dismiss", "modal")
                                     $(modalSucesso).attr("data-toggle", "modal")
@@ -351,4 +370,3 @@
             
     }rodaAplicacao()
 }) 
-

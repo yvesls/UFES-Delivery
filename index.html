@@ -180,10 +180,10 @@
               <div class="modal-body">
                 <div id="pagamentoEndereco" class="mb-3">
                   <h4>Endereço de entrega</h4>
-                  <b>Fulano de Tal</b>, <b>telefone: <span>(28) 99999-9991</span></b><br>
-                  <span>Alto Universitário</span>, <span>S/N</span><br>
-                  <span>Departamento de Computação - UFES Alegre - ES</span><br>
-                  Ponto de Referência:<span> primeiro andar do prédio Central em frente ao ginásio.</span>
+                  <b id="nomeNoEndereco"></b>,  <span  id="numEndereco"></span> <b>telefone: <span>(28) 99999-9991</span></b><br>
+                  <span id="logradouroEndereco"></span><br>
+                  <span  id="bairroEndereco"></span>, <span  id="cidadeEndereco"></span> <br>
+                  Ponto de Referência:<span id="complementoEndereco"></span>
                 </div>
                 <table class="table text-center">
                   <thead>
@@ -196,10 +196,6 @@
                     </tr>
                   </thead>
                   <tbody id="produtosPagamento">
-          
-                    <!-- Local de inserção da lista de produtos dinâmica (dados preenchidos até o momento apenas para visualização. Exibir apenas se o delivery estiver funcionando) -->
-                    
-                    <!-- Linha delimitante indicando o final da tabela -->
                     <tr>
                       <td></td><td></td><td></td><td></td><td></td><td></td>
                     </tr>
@@ -251,13 +247,13 @@
                     </div>
                     <div class="col-9 float-left">
                        <h4 class="p-0 m-0">Entrega no seu endereço</h4>
-                      <b>Fulano de Tal</b>, <b>telefone: <span>(28) 99999-9991</span></b><br>
-                      <span>Alto Universitário</span>, <span>S/N</span><br>
-                      <span>Departamento de Computação - UFES Alegre - ES</span><br>
-                      Ponto de Referência:<span> primeiro andar do prédio Central em frente ao ginásio.</span>
+                       <h4>Endereço de entrega</h4>
+                       <b id="nomeNoEndereco"></b>, <span  id="numEndereco"></span> <b>telefone: <span>(28) 99999-9991</span></b><br>
+                       <span id="logradouroEndereco"></span><br>
+                       <span  id="bairroEndereco"></span>, <span  id="cidadeEndereco"></span>  <br>
+                       Ponto de Referência:<span id="complementoEndereco"></span>
                     </div>
                   </div>
-                 
                   <div class="m-4 d-flex">
                     <div class="col-1 text-center">
                       <img class="icons-pagamento" src="realizar pedido/imagens/coins-solid.svg" />
@@ -266,7 +262,6 @@
                       <b>Você pagou R$ <span>95,00</span> com <span>Mercado Pago</span>.</b>
                     </div>
                   </div>
-
                   <div class="m-4 d-flex">
                     <div class="col-1 text-center">
                       <img class="icons-pagamento" src="realizar pedido/imagens/arrow-alt-circle-left-regular.svg" />

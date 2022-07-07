@@ -23,7 +23,7 @@ $(document).ready(function(){
     }
 
 
-    // console.log(request("/product/get/all", "get"));
+    //console.log(request("/product/get/all", "get"));
 
     // console.log(request("/city/new", "post", {
     //     nome: "alegre",
@@ -49,9 +49,9 @@ $(document).ready(function(){
     //     senha_adm: null
     // }));
 
-    const resposta = request("/product/get/all", "get")
+    // const resposta = request("/product/get/all", "get")
 
-    console.log(resposta)
+    // console.log(resposta)
     
 
 })
