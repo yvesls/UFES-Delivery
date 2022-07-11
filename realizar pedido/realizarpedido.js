@@ -3,26 +3,18 @@ $(document).ready(() => {
    
     const template_url = "http://127.0.0.1:5000"
 
-    const fazerReq = async (url, tipo, conteudo) => {
-        const request = new XMLHttpRequest()
+    async function fazerReq (url, tipo, conteudo) {
 
-        const is_post = (tipo.toUpperCase() === "POST")
-
-        console.log(tipo)
-        request.open(tipo, `${template_url}${url}`, is_post)
-        request.setRequestHeader("Content-type", "application/json");
-        request.send(is_post ? JSON.stringify(conteudo) : null)
-        
-        return is_post ? request : JSON.parse(request.response).result;
-        //console.log(tipo, url, is_post, JSON.stringify(conteudo));
-        request.onreadystatechange = () => {
-            if(request.readyState == 4 && request.status == 200) {
-                
-                return request;
-            }else {
-                
-            }
-        }
+        return await fetch(`${template_url}${url}`, {
+            method: tipo, 
+            headers: {
+            'Content-Type': "application/json"
+            }, 
+            body: JSON.stringify(conteudo)}
+        ).then(response => response.json())
+        .then((data) => {
+            return data.result
+        })
     }
 
     async function rodaAplicacao(){
@@ -32,7 +24,6 @@ $(document).ready(() => {
 
         // tratativa para verificar se o usuário está logado
         await fazerReq("/user/get/client/2", 'GET').then((dadosUsuario)=>{
-            //console.log(dadosUsuario)
             tipoUsuario = dadosUsuario.cd_tipo_usuario;
 
             if(tipoUsuario == 1){
@@ -172,14 +163,14 @@ $(document).ready(() => {
     
                             } 
 
-                        }else if(jsonProdutos != -1 || parseInt(dia) == 1 || (parseInt(hora) < 15)){
+                        }else if(produtos != -1 || parseInt(dia) == 1 || (parseInt(hora) < 15)){
                             $(document.getElementById("nFunHorarioEDia")).css("display", "block");
                         }else if(produtos[i].length == 0){
                             $(document.getElementById("qtdZerada")).css("display", "block");
                         }else if(tratamentoPersonalizado){
                             $(document.getElementById("nFunPersonalizado")).css("display", "block");
                         }else {
-                            if(jsonProdutos == -1){
+                            if(produtos == -1){
                                 $(document.getElementById("erroAoCarregarProdutos")).css("display", "block");
                             }
                         }
@@ -235,7 +226,7 @@ $(document).ready(() => {
 
                         function adicionarNaSacola(array, i){
                             // adicionando produtos à sacola em "pagar"
-                            console.log(array, i)
+                            //console.log(array, i)
                             let tr, td = [], j = 0;
                             tr = document.createElement("TR")
                             while(j != 5){
@@ -294,7 +285,7 @@ $(document).ready(() => {
                         }
         
                         $(document.getElementById("buttonPagar")).on("click", buttonPagar);
-        
+                        let totalpago
                         function buttonPagar(){
                             let temItemSacola = document.getElementById("totalAPagar").innerHTML
         
@@ -302,6 +293,7 @@ $(document).ready(() => {
                                 let pagar = document.getElementById("buttonPagar");
                                 $(pagar).attr("data-toggle", "modal")
                                 $(pagar).attr("data-target", "#fazerPagamento")
+                                totalpago = document.getElementById("totalAPagarCDescontoPagamento").innerHTML
                                 document.getElementById("requisitoPagar").innerHTML = ""
                             }else {
                                 document.getElementById("requisitoPagar").innerHTML = "É necessário ter algum item na sacola e endereço cadastrado para acessar esta janela."
@@ -327,16 +319,26 @@ $(document).ready(() => {
                                 "cd_senha":12345678,
                                 "cd_token": null
                             }
-                            await fazerReq("/user/get/address", 'POST', usuario).then((endereco)=>{
+                            await fazerReq("/user/get/address", "POST", usuario).then((endereco)=>{
+                                let cidade
+                                // console.log(endereco)
+                                // console.log(endereco.cd_cidade)
+                                if(endereco.cd_cidade == 1)
+                                    cidade = "Alegre"
+                                document.getElementById("nomeNoEndereco").innerHTML = dadosUsuario.no_usuario.toLowerCase() 
+                                document.getElementById("logradouroEndereco").innerHTML = endereco.no_logradouro.toLowerCase()
+                                document.getElementById("bairroEndereco").innerHTML = endereco.no_bairro.toLowerCase()
+                                document.getElementById("cidadeEndereco").innerHTML = cidade
+                                document.getElementById("numEndereco").innerHTML = endereco.ds_numero
+                                document.getElementById("complementoEndereco").innerHTML = endereco.ds_complemento.toLowerCase()
+                                document.getElementById("nomeNoEndereco2").innerHTML = dadosUsuario.no_usuario.toLowerCase() 
+                                document.getElementById("logradouroEndereco2").innerHTML = endereco.no_logradouro.toLowerCase()
+                                document.getElementById("bairroEndereco2").innerHTML = endereco.no_bairro.toLowerCase()
+                                document.getElementById("cidadeEndereco2").innerHTML = cidade
+                                document.getElementById("numEndereco2").innerHTML = endereco.ds_numero
+                                document.getElementById("complementoEndereco2").innerHTML = endereco.ds_complemento.toLowerCase()
                                 
-                                console.log(endereco)
-
-                                // document.getElementById("nomeNoEndereco").innerHTML = dadosUsuario.no_usuario
-                                // document.getElementById("logradouroEndereco").innerHTML = endereco.no_logradouro
-                                // document.getElementById("bairroEndereco").innerHTML = endereco.no_bairro
-                                // document.getElementById("cidadeEndereco").innerHTML = endereco.no_cidade
-                                // document.getElementById("numEndereco").innerHTML = endereco.ds_numero
-                                // document.getElementById("complementonumEndereco").innerHTML = endereco.ds_complemento
+                                
                             });
                         }getEndereco()
 
@@ -347,14 +349,27 @@ $(document).ready(() => {
                             
                             if(pagamentoConcluido){
                                 $(document.getElementById("encomendarPedido")).attr("data-target", "#resumoPedido")
-
-                                let jsonPedido = {"cd_usuario": dadosUsuario.cd_usuario}
-                                console.log(jsonPedido.toString())
+                                
+                                //console.log(parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", ".")))
+                                let jsonPedido = {
+                                    "cd_usuario": dadosUsuario.cd_usuario
+                                    //parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", "."))
+                                }
+                                console.log(jsonPedido)
                                 await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
                                     let modalSucesso = document.getElementById("encomendarPedido");
+                                    $(modalSucesso).attr("data-target", "#resumoPedido")
                                     $(modalSucesso).attr("data-dismiss", "modal")
                                     $(modalSucesso).attr("data-toggle", "modal")
-                                    $(modalSucesso).attr("data-target", "#resumoPedido")
+                                    
+                                    // resgatar itens do pedido e inserir no banco de dados 
+
+                                    fazerReq("/order/get/1", "GET").then((pedido)=>{
+                                        console.log(pedido)
+                                        
+                                        document.getElementById("totalPagoResumo").innerHTML = totalpago
+                                    })
+
                                 })
                             }else {
                                 $(document.getElementById("encomendarPedido")).attr("data-target", "#erroPagamento")

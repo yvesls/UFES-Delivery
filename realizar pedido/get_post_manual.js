@@ -53,7 +53,12 @@ $(document).ready(function(){
 
     // console.log(resposta)
     
+    // criar novo cliente (pelo menos 2)
 
+    let jsonPedido = {
+        "cd_usuario": 2
+    }
+    console.log(request("/order/new", "POST", jsonPedido))
 })
 
 
