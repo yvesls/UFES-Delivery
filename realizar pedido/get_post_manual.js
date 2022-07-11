@@ -12,14 +12,9 @@ $(document).ready(function(){
         request.send(is_post ? JSON.stringify(conteudo) : null)
 
         //console.log(tipo, url, is_post, JSON.stringify(conteudo));
-        request.onreadystatechange = () => {
-            if(request.readyState == 4 && request.status == 200) {
-                
-                return request;
-            }else {
-                return request.response;
-            }
-        }
+        
+        return request.response;
+        
     }
 
 
@@ -32,18 +27,18 @@ $(document).ready(function(){
 
     // console.log(request("/address/new", "post", {
     //     cd_cidade: 1,
-    //     no_logradouro: "Rua Tal",
-    //     no_bairro: "Gerúndio",
-    //     ds_numero: "A208",
+    //     no_logradouro: "Rua Tal 2",
+    //     no_bairro: "Gerúndio 2",
+    //     ds_numero: "A209",
     //     nu_cep: "29500-000",
-    //     ds_complemento: "Próximo à praça 22"
+    //     ds_complemento: "Ao lado do banco do Brasil"
     // }));
         
     // console.log(request("/user/new", "post", {
-    //     cd_endereco: 1,
-    //     email_usuario: "lucio.pena@gmail.com",
-    //     senha_usuario: "12345678",
-    //     nome_usuario: "Lucio Pena",
+    //     cd_endereco: 2,
+    //     email_usuario: "marcos.couto@gmail.com",
+    //     senha_usuario: "123456789",
+    //     nome_usuario: "marcos couto",
     //     tipo_usuario: 1,
     //     email_adm: null,
     //     senha_adm: null
@@ -55,10 +50,10 @@ $(document).ready(function(){
     
     // criar novo cliente (pelo menos 2)
 
-    let jsonPedido = {
-        "cd_usuario": 2
-    }
-    console.log(request("/order/new", "POST", jsonPedido))
+    // let jsonPedido = {
+    //     "cd_usuario": 3
+    // }
+    // console.log(request("/order/new", "POST", jsonPedido))
 })
 
 

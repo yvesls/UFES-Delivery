@@ -109,8 +109,7 @@ $(document).ready(() => {
                         if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
                             $(document.getElementById("tabela")).removeClass("dis-none");
                             $(document.getElementsByClassName("container-bottom")).addClass("d-flex");
-                            $(document.getElementById("lojaFechada")).removeClass("d-flex");
-                            $(document.getElementById("lojaFechada")).css("display", "none");
+                            
                             // percorre o array dos produtos
                             for(i = 0; i < qtdProdutos; i++){
                                 
@@ -165,11 +164,12 @@ $(document).ready(() => {
                             } 
 
                         }else if(produtos != -1 || parseInt(dia) == 1 || (parseInt(hora) < 15)){
+                            $(document.getElementById("lojaFechada")).addClass("d-flex");
                             $(document.getElementById("nFunHorarioEDia")).css("display", "block");
                         }else if(produtos[i].length == 0){
                             $(document.getElementById("qtdZerada")).css("display", "block");
                         }else if(tratamentoPersonalizado){
-                            $(document.getElementById("tabela")).css("display", "none");
+                            $(document.getElementById("lojaFechada")).addClass("d-flex");
                             $(document.getElementById("nFunPersonalizado")).css("display", "block");
                         }else {
                             if(produtos == -1){
