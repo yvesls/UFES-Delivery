@@ -106,7 +106,7 @@ $(document).ready(() => {
                         let hora = verificaHorarioFunc.slice(2, 4)
                         let dia = verificaHorarioFunc.slice(0, 2)
     
-                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
+                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) == 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
                             $(document.getElementById("tabela")).removeClass("dis-none");
                             $(document.getElementsByClassName("container-bottom")).addClass("d-flex");
                             
