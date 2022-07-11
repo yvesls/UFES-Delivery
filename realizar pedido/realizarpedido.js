@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
    
-    const template_url = "http://127.0.0.1:5000"
+    const template_url = "34.125.171.237:5000"
 
     async function fazerReq (url, tipo, conteudo) {
 
@@ -20,10 +20,10 @@ $(document).ready(() => {
     async function rodaAplicacao(){
         $(document.getElementById("tabela")).addClass("dis-none");
         // variáveis para conter dados do usuário
-        let tipoUsuario, nomeUsuario, enderecoUsuario;
+        let tipoUsuario, nomeUsuario, enderecoUsuario, usuario = 3;
 
         // tratativa para verificar se o usuário está logado
-        await fazerReq("/user/get/client/2", 'GET').then((dadosUsuario)=>{
+        await fazerReq(`/user/get/client/${usuario}`, 'GET').then((dadosUsuario)=>{
             tipoUsuario = dadosUsuario.cd_tipo_usuario;
 
             if(tipoUsuario == 1){
@@ -302,6 +302,7 @@ $(document).ready(() => {
                             }
                         }
 
+                        // função que calcula valor total a pagar e exibe na aba de descontos
                         function valorTotalAPagar(){
                     
                             if(descontos.qtd_usos < descontos.qtd_max_usos && vlTotalSDesc >= 20){
@@ -314,11 +315,12 @@ $(document).ready(() => {
                             }
                         }
 
+                        // resgata o endereço e exibe na janela de pagamento e janela de resumo do pedido
                         async function getEndereco(){
                             let usuario = {
                                 "cd_usuario":dadosUsuario.cd_usuario,
-                                "ds_email":'LUCIO.PENA@GMAIL.COM',
-                                "cd_senha":12345678,
+                                "ds_email":'MARCOS.COUTO@GMAIL.COM',
+                                "cd_senha":123456789,
                                 "cd_token": null
                             }
                             await fazerReq("/user/get/address", "POST", usuario).then((endereco)=>{
@@ -346,6 +348,7 @@ $(document).ready(() => {
 
                         $(document.getElementById("encomendarPedido")).on("click", encomendarPedido);
                     
+                        // função que trata a criação do pedido e retorna o resumo do pedido
                         async function encomendarPedido(){
                             let pagamentoConcluido = true;
                             
