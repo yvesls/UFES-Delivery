@@ -98,7 +98,7 @@ $(document).ready(() => {
                     let tratamentoPersonalizado = false;
 
                     await fazerReq("/product/get/all", 'GET').then((produtos)=> {
-                        //console.log(produtos)
+                        console.log(produtos)
 
                         qtdProdutos = produtos.length
 
@@ -106,10 +106,10 @@ $(document).ready(() => {
                         let hora = verificaHorarioFunc.slice(2, 4)
                         let dia = verificaHorarioFunc.slice(0, 2)
     
-                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15)) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
+                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
                             $(document.getElementsByClassName("container-bottom")).addClass("d-flex");
-                            
-    
+                            $(document.getElementById("lojaFechada")).removeClass("d-flex");
+                            $(document.getElementById("lojaFechada")).css("display", "none");
                             // percorre o array dos produtos
                             for(i = 0; i < qtdProdutos; i++){
                                 
@@ -164,10 +164,12 @@ $(document).ready(() => {
                             } 
 
                         }else if(produtos != -1 || parseInt(dia) == 1 || (parseInt(hora) < 15)){
+                            $(document.getElementById("tabela")).css("display", "none");
                             $(document.getElementById("nFunHorarioEDia")).css("display", "block");
                         }else if(produtos[i].length == 0){
                             $(document.getElementById("qtdZerada")).css("display", "block");
                         }else if(tratamentoPersonalizado){
+                            $(document.getElementById("tabela")).css("display", "none");
                             $(document.getElementById("nFunPersonalizado")).css("display", "block");
                         }else {
                             if(produtos == -1){
