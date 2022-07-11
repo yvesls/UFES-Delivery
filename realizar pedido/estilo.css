@@ -145,3 +145,7 @@
 		.text-end{
 			text-align: end;
 		}
+
+		.dis-none.dis-none.dis-none.dis-none.dis-none {
+			display: none !important;
+		}
