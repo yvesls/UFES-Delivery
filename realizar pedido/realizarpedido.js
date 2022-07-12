@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
    
-    const template_url = "34.125.171.237:5000"
+    const template_url = "http://127.0.0.1:5000"
 
     async function fazerReq (url, tipo, conteudo) {
         try {
@@ -25,7 +25,7 @@ $(document).ready(() => {
     }
 
     // variáveis para conter dados do usuário
-    let tipoUsuario, nomeUsuario, usuario = 2, jsonItensPedido = [], qtdItensSacola = 0, qtItens = [], cdProduto = [];
+    let tipoUsuario, nomeUsuario, usuario = 6, jsonItensPedido = [], qtdItensSacola = 0, qtItens = [], cdProduto = [];
         
     async function rodaAplicacao(){
         $(document.getElementById("tabela")).addClass("dis-none");
