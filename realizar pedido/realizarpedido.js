@@ -1,24 +1,31 @@
 $(document).ready(() => {
 
    
-    const template_url = "http://127.0.0.1:5000"
+    const template_url = "34.125.171.237:5000"
 
     async function fazerReq (url, tipo, conteudo) {
-
-        return await fetch(`${template_url}${url}`, {
-            method: tipo, 
-            headers: {
-            'Content-Type': "application/json"
-            }, 
-            body: JSON.stringify(conteudo)}
-        ).then(response => response.json())
-        .then((data) => {
-            return data.result
-        })
+        try {
+            return await fetch(`${template_url}${url}`, {
+                method: tipo, 
+                headers: {
+                'Content-Type': "application/json"
+                }, 
+                body: JSON.stringify(conteudo)}
+                
+            ).then(response => 
+                response.json()
+                
+            ).then((data) => {
+                return data.result
+            })
+        } catch(e){
+            console.log("Ocorreu algum erro:", e)
+        }
+        
     }
 
     // variáveis para conter dados do usuário
-    let tipoUsuario, nomeUsuario, usuario = 2, jsonItensPedido = [], qtdItensPedido, qtdItensSacola = 1, cd_produto = null;
+    let tipoUsuario, nomeUsuario, usuario = 6, jsonItensPedido = [], qtdItensSacola = 0, codPedido = 1, qtItens = [], cdProduto = [];
         
     async function rodaAplicacao(){
         $(document.getElementById("tabela")).addClass("dis-none");
@@ -107,7 +114,7 @@ $(document).ready(() => {
                         let hora = verificaHorarioFunc.slice(2, 4)
                         let dia = verificaHorarioFunc.slice(0, 2)
     
-                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) == 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
+                        if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
                             $(document.getElementById("tabela")).removeClass("dis-none");
                             $(document.getElementsByClassName("container-bottom")).addClass("d-flex");
                             
@@ -266,12 +273,11 @@ $(document).ready(() => {
                             $(tr).append(td[3])
                             $(tr).append(td[4])
 
-                            jsonItensPedido[qtdItensSacola] = {
-                                "cd_pedido": cd_produto,
-                                "cd_produto": array[i].cd_produto,
-                                "qt_itens": parseInt(document.getElementById("valor" +i).innerHTML) 
-                            }
-        
+                            qtItens[qtdItensSacola] = parseInt(document.getElementById("valor" +i).innerHTML) 
+                            cdProduto[qtdItensSacola] = array[i].cd_produto
+                            console.log(qtItens[qtdItensSacola])
+                            console.log(cdProduto[qtdItensSacola])
+
                             $("#produtosPagamento").prepend(tr)
                             // fim do - adicionando produtos à sacola em "pagar"
                             
@@ -327,8 +333,8 @@ $(document).ready(() => {
                         async function getEndereco(){
                             let usuario = {
                                 "cd_usuario":dadosUsuario.cd_usuario,
-                                "ds_email":'LUCIO.PENA@GMAIL.COM',
-                                "cd_senha":12345678,
+                                "ds_email":'MARIA.w@GMAIL.COM',
+                                "cd_senha":123111332,
                                 "cd_token": null
                             }
                             await fazerReq("/user/get/address", "POST", usuario).then((endereco)=>{
@@ -358,8 +364,9 @@ $(document).ready(() => {
                         
                         // função que trata a criação do pedido e retorna o resumo do pedido
                         async function encomendarPedido(){
+                           
                             let pagamentoConcluido = true;
-                            
+                            let k, cdPedido
                             if(pagamentoConcluido){
                                 
                                 //console.log(parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", ".")))
@@ -367,25 +374,34 @@ $(document).ready(() => {
                                     "cd_usuario": dadosUsuario.cd_usuario
                                     //parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", "."))
                                 }
-                                console.log(jsonPedido)
-                                await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
-
+                                // console.log(jsonPedido)
+                                await fazerReq("/order/new", "POST", jsonPedido).then((pedido)=>{
+                                    
                                     let modalSucesso = document.getElementById("encomendarPedido");
                                     $(modalSucesso).attr("data-target", "#resumoPedido")
                                     $(modalSucesso).attr("data-dismiss", "modal")
                                     $(modalSucesso).attr("data-toggle", "modal")
 
-                                    console.log(jsonItensPedido[1])
                                     // resgatar itens do pedido e inserir no banco de dados 
-                                    async function insereItens(){
-                                        for (let k; k <= qtdItensPedido; k ++){
-                                            jsonItensPedido[k].cd_pedido = 5
+
+                                    async function insereItensPedido(){
+                                        
+                                        await fazerReq("/order/get/all", "GET").then((pedido)=>{
+                                            cdPedido = pedido[(pedido.length)-1]
+                                            console.log(cdPedido.cd_pedido)
+                                        })
+                                        for (k = 0; k < qtdItensSacola; k ++){
+                                            jsonItensPedido[k] = {
+                                                "cd_pedido": cdPedido.cd_pedido,
+                                                "cd_produto": cdProduto[k],
+                                                "qt_itens": qtItens[k]
+                                            }
                                             console.log(jsonItensPedido[k])
-                                            await fazerReq("/order/add/product", "POST", jsonItensPedido[k]).then((pedido)=>{
-                                                console.log(pedido)
-                                            })
+                                            await fazerReq("/order/add/product", "POST", jsonItensPedido[k])
                                         }
-                                    }insereItens()
+                                    }insereItensPedido()
+                                    
+                                    
                                 })
 
                             }else {

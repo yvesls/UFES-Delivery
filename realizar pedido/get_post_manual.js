@@ -27,22 +27,22 @@ $(document).ready(function(){
 
     // console.log(request("/address/new", "post", {
     //     cd_cidade: 1,
-    //     no_logradouro: "Rua Tal 2",
-    //     no_bairro: "Gerúndio 2",
-    //     ds_numero: "A200",
+    //     no_logradouro: "Rua Tal 3",
+    //     no_bairro: "Gerúndio 3",
+    //     ds_numero: "A203",
     //     nu_cep: "29500-000",
     //     ds_complemento: "Ao lado do banco do Brasil"
     // }));
         
-    console.log(request("/user/new", "post", {
-        cd_endereco: 3,
-        email_usuario: "MARIA.DOIS@GMAIL.COM",
-        senha_usuario: "1231113",
-        nome_usuario: "MARIA DOIS",
-        tipo_usuario: 1,
-        email_adm: null,
-        senha_adm: null
-    }));
+    // console.log(request("/user/new", "POST", {
+    //     cd_endereco: 3,
+    //     email_usuario: "MARIA.w@GMAIL.COM",
+    //     senha_usuario: "123111332",
+    //     nome_usuario: "MARIa DOIS",
+    //     tipo_usuario: 1,
+    //     email_adm: null,
+    //     senha_adm: null
+    // }));
 
     // const resposta = request("/product/get/all", "get")
 
