@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
    
-    const template_url = "34.125.171.237:5000"
+    const template_url = "http://127.0.0.1:5000"
 
     async function fazerReq (url, tipo, conteudo) {
 
@@ -17,11 +17,12 @@ $(document).ready(() => {
         })
     }
 
+    // variáveis para conter dados do usuário
+    let tipoUsuario, nomeUsuario, usuario = 2, jsonItensPedido = [], qtdItensPedido, qtdItensSacola = 1, cd_produto = null;
+        
     async function rodaAplicacao(){
         $(document.getElementById("tabela")).addClass("dis-none");
-        // variáveis para conter dados do usuário
-        let tipoUsuario, nomeUsuario, enderecoUsuario, usuario = 3;
-
+        
         // tratativa para verificar se o usuário está logado
         await fazerReq(`/user/get/client/${usuario}`, 'GET').then((dadosUsuario)=>{
             tipoUsuario = dadosUsuario.cd_tipo_usuario;
@@ -264,6 +265,12 @@ $(document).ready(() => {
                             $(tr).append(td[2])
                             $(tr).append(td[3])
                             $(tr).append(td[4])
+
+                            jsonItensPedido[qtdItensSacola] = {
+                                "cd_pedido": cd_produto,
+                                "cd_produto": array[i].cd_produto,
+                                "qt_itens": parseInt(document.getElementById("valor" +i).innerHTML) 
+                            }
         
                             $("#produtosPagamento").prepend(tr)
                             // fim do - adicionando produtos à sacola em "pagar"
@@ -277,6 +284,7 @@ $(document).ready(() => {
                             document.getElementById("totalAPagarCDescontoPagamento").innerHTML = vlTotalCDesc.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                             document.getElementById("totalAPagar").innerHTML = vlTotalCDesc.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                             document.getElementById("descontoPagamento").innerHTML = descontosSomados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                            qtdItensSacola++;
                         }
         
                         function somaVlItens(vlTotalItem){
@@ -319,8 +327,8 @@ $(document).ready(() => {
                         async function getEndereco(){
                             let usuario = {
                                 "cd_usuario":dadosUsuario.cd_usuario,
-                                "ds_email":'MARCOS.COUTO@GMAIL.COM',
-                                "cd_senha":123456789,
+                                "ds_email":'LUCIO.PENA@GMAIL.COM',
+                                "cd_senha":12345678,
                                 "cd_token": null
                             }
                             await fazerReq("/user/get/address", "POST", usuario).then((endereco)=>{
@@ -347,13 +355,12 @@ $(document).ready(() => {
                         }getEndereco()
 
                         $(document.getElementById("encomendarPedido")).on("click", encomendarPedido);
-                    
+                        
                         // função que trata a criação do pedido e retorna o resumo do pedido
                         async function encomendarPedido(){
                             let pagamentoConcluido = true;
                             
                             if(pagamentoConcluido){
-                                $(document.getElementById("encomendarPedido")).attr("data-target", "#resumoPedido")
                                 
                                 //console.log(parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", ".")))
                                 let jsonPedido = {
@@ -362,20 +369,25 @@ $(document).ready(() => {
                                 }
                                 console.log(jsonPedido)
                                 await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
+
                                     let modalSucesso = document.getElementById("encomendarPedido");
                                     $(modalSucesso).attr("data-target", "#resumoPedido")
                                     $(modalSucesso).attr("data-dismiss", "modal")
                                     $(modalSucesso).attr("data-toggle", "modal")
-                                    
+
+                                    console.log(jsonItensPedido[1])
                                     // resgatar itens do pedido e inserir no banco de dados 
-
-                                    fazerReq("/order/get/1", "GET").then((pedido)=>{
-                                        console.log(pedido)
-                                        
-                                        document.getElementById("totalPagoResumo").innerHTML = totalpago
-                                    })
-
+                                    async function insereItens(){
+                                        for (let k; k <= qtdItensPedido; k ++){
+                                            jsonItensPedido[k].cd_pedido = 5
+                                            console.log(jsonItensPedido[k])
+                                            await fazerReq("/order/add/product", "POST", jsonItensPedido[k]).then((pedido)=>{
+                                                console.log(pedido)
+                                            })
+                                        }
+                                    }insereItens()
                                 })
+
                             }else {
                                 $(document.getElementById("encomendarPedido")).attr("data-target", "#erroPagamento")
                             }  

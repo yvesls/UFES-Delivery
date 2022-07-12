@@ -29,20 +29,20 @@ $(document).ready(function(){
     //     cd_cidade: 1,
     //     no_logradouro: "Rua Tal 2",
     //     no_bairro: "Gerúndio 2",
-    //     ds_numero: "A209",
+    //     ds_numero: "A200",
     //     nu_cep: "29500-000",
     //     ds_complemento: "Ao lado do banco do Brasil"
     // }));
         
-    // console.log(request("/user/new", "post", {
-    //     cd_endereco: 2,
-    //     email_usuario: "marcos.couto@gmail.com",
-    //     senha_usuario: "123456789",
-    //     nome_usuario: "marcos couto",
-    //     tipo_usuario: 1,
-    //     email_adm: null,
-    //     senha_adm: null
-    // }));
+    console.log(request("/user/new", "post", {
+        cd_endereco: 3,
+        email_usuario: "MARIA.DOIS@GMAIL.COM",
+        senha_usuario: "1231113",
+        nome_usuario: "MARIA DOIS",
+        tipo_usuario: 1,
+        email_adm: null,
+        senha_adm: null
+    }));
 
     // const resposta = request("/product/get/all", "get")
 
