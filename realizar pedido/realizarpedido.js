@@ -25,7 +25,7 @@ $(document).ready(() => {
     }
 
     // variáveis para conter dados do usuário
-    let tipoUsuario, nomeUsuario, usuario = 6, jsonItensPedido = [], qtdItensSacola = 0, codPedido = 1, qtItens = [], cdProduto = [];
+    let tipoUsuario, nomeUsuario, usuario = 2, jsonItensPedido = [], qtdItensSacola = 0, qtItens = [], cdProduto = [];
         
     async function rodaAplicacao(){
         $(document.getElementById("tabela")).addClass("dis-none");
@@ -375,7 +375,7 @@ $(document).ready(() => {
                                     //parseFloat(document.getElementById("totalAPagarCDescontoPagamento").innerHTML.slice("8").replace(",", "."))
                                 }
                                 // console.log(jsonPedido)
-                                await fazerReq("/order/new", "POST", jsonPedido).then((pedido)=>{
+                                await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
                                     
                                     let modalSucesso = document.getElementById("encomendarPedido");
                                     $(modalSucesso).attr("data-target", "#resumoPedido")
