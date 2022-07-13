@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
    
-    const template_url = "34.125.171.237:5000"
+    const template_url = "https://34.125.171.237:5000"
 
     async function fazerReq (url, tipo, conteudo) {
         try {
