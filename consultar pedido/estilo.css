@@ -10,26 +10,46 @@
 			padding: 0;
 		}
 
-		body {
+		.body {
 			margin: 0;
-			color: #7F6898;
+			background-color: #cacaca;
 			height: auto;
 			overflow-x: hidden;
 		}
 
-		header{
-			background-color: #acacac;
+		::-webkit-scrollbar-track {
+			background-color: #cacaca;
+		}
+		
+		::-webkit-scrollbar {
+			width: 8px;
+			background-color: #04032c;
+		}
+		
+		::-webkit-scrollbar-thumb {
+			background: linear-gradient(to bottom, #015db3, #0574db); 
+		}
+
+		table.table > thead > tr > th, table > tbody > tr > td {
+			border-color: black !important;
+		}
+		
+		header {
+			position: fixed;
+			top: 0;
+			height: 20vh;
 		}
 
 		.link-menu {
 			color: black;
 			padding: 5px 20px;
 			border-radius: 15px;
+			width: 20%;
+			text-align: center;
 		}
 
 		.link-menu:hover, .active {
-			background-color: #777777;
-			color: #ffffff;
+			color: #015db3;
 			text-decoration: none;
 		}
 
@@ -46,21 +66,24 @@
 			background-color: #a5a5a5;
 		}
 
-		.user, .usuario {
-			color: #ffffff;
-			
-		}
-
 		.usuario {
 			background-color: #777777;
 			border-radius: 5px 0px 0px 5px;
 			font-weight: 600;
 			letter-spacing: 1px;
+			color: white;
 		}
 
 		.user {
 			background-color: #919191;
 			border-radius: 0px 5px 5px 0px;
+			color: white;
+		}
+
+		.data {
+			color: #5c5c5c;
+			background-color: #ececec;
+			border-radius: 5px;
 		}
 
 		.tr-desc {
@@ -76,7 +99,15 @@
 		}
 
 		/*consultar pedidos*/
-		
+
+		.container-middle {
+			height: 60vh;
+			position: fixed;
+			top: 35vh;
+			overflow-y: scroll;
+			width: 100%;
+		}
+
 		.janela-detalhes {
 			padding: 20px;
 			background-color: white;
@@ -89,22 +120,45 @@
 			top: 32%; */
 		}
 
-		.filtro {
-			position: relative;
+		.container-top {
+			position: fixed;
+			top: 23vh;
+			height: 15vh;
+			z-index: 1;
+			margin-left: 12.5%;
 		}
 
 		#check-situacao {
 			text-align: center;
-			border: 1px solid gray;
+			border: 1px solid rgb(90, 90, 90);
 			border-radius: 5px;
 			padding: 5px;
 			cursor: pointer;
 			user-select: none;
+			background-color: #7e7e7e;
+			color: white;
+		}
+
+		
+		.novo-pedido-item {
+			background: rgb(231, 231, 231);
+			border-radius: 10px;
+		}
+
+		.date-select {
+			border: 1px solid black;
+			border-radius: 5px;
+		}
+
+		.date-select.date-select:focus {
+			box-shadow: none;
+			border: 1px solid black;
+			border-radius: 5px;
 		}
 
 		#check-situacao:active {
 			position: relative;
-			top: 1px;
+			top: 2px;
 		}
 
 		#check-situacao:hover {
@@ -122,9 +176,10 @@
 		}
 
 		.select-checks {
-			background-color: #e2e2e2;
+			background-color: #ececec;
 			position: absolute;
-			top: 36px;
+			top: 10vh;
+			margin-left: -22px;
 			border: 1px solid #777777;
 			border-radius: 5px;
 			padding: 10px;

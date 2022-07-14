@@ -3,30 +3,35 @@
 	<head>
 		<title>Consultar pedido</title>
 		<meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="./imagens/logo.png">
 		<link rel="stylesheet" href="estilo.css" type="text/css">
-        <link href="/fontawesome-free-6.1.1-web/css/all.css" rel="stylesheet">
-        <script defer src="/fontawesome-free-6.1.1-web/js/all.js"></script>
-		<!-- Bootstrap CSS -->
+    <script defer src="https://kit.fontawesome.com/bf49d14db6.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	</head>
+	</head> 
 	<body>
-        <div class="navbar col-12 d-flex justify-content-around py-3 pb-4">
-          <a href="#" class="link-menu active">Consultar Pedido</a>
-          <a href="#" class="link-menu">Link provisório</a>
-          <a href="#"><img src="logo.png" alt=""></a>
-          <a href="#" class="link-menu">Link provisório</a>
-          <a href="#" class="link-menu">Link provisório</a>
-        </div>
-		    <header class="p-3 w-100">
-            <h1 class="text-dark text-center">Consultar pedido</h1>
+		    <header class="w-100 mt-3">
+          <div class=" d-flex justify-content-around mt-3">
+            <a href="#" class="link-menu active">Consultar Pedido</a>
+            <a href="#" class="link-menu"></a>
+            <a href="#"><img src="imagens/logo.png" alt=""></a>
+            <a href="#" class="link-menu" data-toggle="modal" data-target="#pedidosReembolso">Reembolso</a>
+            <a href="#" class="link-menu" data-toggle="modal" data-target="#notificacaoNovosPedidos"><img class="icons" src="imagens/bell-solid.svg"></a>
+          </div>
+          
+          <div class="usuario-data d-flex w-100 justify-content-between">
+            <div class=" p-3 m-3"><span class="usuario px-3 py-3">Usuário</span><span id="nomeUsuario" class="user px-3 py-3">Nome do usuário</span></div>
+            <div class=" p-3 m-3"><span class="data px-3 py-3">Data: <span id="dataEHora"></span></span></div>
+          </div>
         </header>
 
-        <div class="d-flex w-100 justify-content-between">
-            <div class="my-5 ml-3"><span class="usuario px-3 py-2">Usuário</span><span class="user px-3 py-2">Marcos Pereira (Atendente)</span></div>
-            <div class=" my-5 mr-5">Data: <input type="date" /></div>
-            <div class="filtro my-5 mr-5 d-flex align-items-baseline">
+        <div class="container-top d-flex justify-content-around w-75 align-items-center">
+            <div class="">Data início: <input class="bg-cinza-claro date-select p-1" type="date"/></div>
+            <div class="">Data fim: <input class="bg-cinza-claro date-select p-1" type="date"/></div>
+            <div class="d-flex justify-content-around">
                 <!-- campo onde exibe as opções selecionadas (confirmados padrão) -->
-                <div id="check-situacao">Todos<img src="caret-down-solid.svg" id="icon-situacao"><img id="icon-situacao-2" src="caret-up-solid.svg"></div>
+                <div class="mr-3 pl-2" id="check-situacao">Todos<img src="imagens/caret-down-solid.svg" id="icon-situacao"><img id="icon-situacao-2" src="imagens/caret-up-solid.svg"></div>
                 <div class="form-select select-checks" id="select-checks" aria-label="Default select example">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="1" id="flexCheck1">
@@ -64,61 +69,219 @@
             </div>
         </div>
 
+         <!-- Modal - Notificação de um novo pedido -->
+         <div class="modal fade" id="notificacaoNovosPedidos" tabindex="-1" role="dialog" aria-labelledby="notificacaoNovosPedidosTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="notificacaoNovosPedidosTitle">Novos pedidos</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="p-4">
+                <!-- <div class="col-12 d-flex justify-content-around novo-pedido-item p-2 align-items-baseline">
+                  <span>Novo pedido</span> 
+                  <span>14 de Abril 20:55</span> 
+                  <span><img src="imagens/plus-solid.svg" class="icons-sacola" data-dismiss="modal" data-toggle="modal" data-target="#detalhesPedido"></span>
+                </div> -->
+                <div class="col-12 text-center">
+                  <h4>Não há novos pedidos até o momento.</h4>
+                </div>
+              </div>
+              <div class="w-100 d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary mx-4 mb-4" data-dismiss="modal">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <!-- Janela de detalhes do pedido (Modelo) -->
-        <div class="janela-detalhes">
-          <div class="p-2 col-12 d-flex justify-content-between"><div><b>Pedido:</b> 00001</div><div><b>Atendente: </b>José Marcos</div><div>22/03/22 às 20:02 PM</div></div>
-          <div class="p-2 col-12"><b>Cliente:</b> João da Silva</div>
-          <div class="p-2 col-12"><b>Endereço de entrega:</b> <div class="p-2"> Alto Universitário S/N <br> Departamento de computação UFES - Alegre. <br> Ponto de referência: Segundo andar do prédio central.</div></div>
-          <div class="p-2 col-12">
-            <b>Produtos:</b>
-            <div>
-              <table class="table text-center">
-                <thead>
-                  <tr>
-                    <th scope="col">Produto</th>
-                    <th scope="col">Quantidade</th>
-                    <th scope="col">Valor Unitário</th>
-                    <th scope="col">Valor Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Vitamina de Abacaxi</td>
-                    <td>4</td>
-                    <td>7,00 R$</td>
-                    <td>28,00 R$</td>
-                  </tr>
-                  <tr><td></td><td></td><td></td><td></td></tr>
-                </tbody>
-              </table>
-              <div class="col-12 d-flex justify-content-between">
-                <table class="table col-6 text-center">
+        <div class="modal fade" id="detalhesPedido" tabindex="-1" role="dialog" aria-labelledby="detalhesPedidoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="detalhesPedidoTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="p-2 col-12 d-flex justify-content-between"><div><b>Pedido:</b> 00001</div><div><b>Atendente: </b>José Marcos</div><div>22/03/22 às 20:02 PM</div></div>
+                <div class="p-2 col-12"><b>Cliente:</b> João da Silva</div>
+                <div class="p-2 col-12"><b>Endereço de entrega:</b> <div class="p-2"> Alto Universitário S/N <br> Departamento de computação UFES - Alegre. <br> Ponto de referência: Segundo andar do prédio central.</div></div>
+                <div class="p-2 col-12">
+                  <b>Produtos:</b>
+                  <div>
+                    <table class="table text-center">
+                      <thead>
+                        <tr>
+                          <th scope="col">Produto</th>
+                          <th scope="col">Quantidade</th>
+                          <th scope="col">Valor Unitário</th>
+                          <th scope="col">Valor Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Vitamina de Abacaxi</td>
+                          <td>4</td>
+                          <td>7,00 R$</td>
+                          <td>28,00 R$</td>
+                        </tr>
+                        <tr><td></td><td></td><td></td><td></td></tr>
+                      </tbody>
+                    </table>
+                    <div class="col-12 d-flex">
+                      <table class="table col-5 text-center">
+                        <thead>
+                          <tr>
+                            <th scope="col">Desconto</th>
+                            <th scope="col">Total Pago</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>10%</td>
+                            <td>25,20 R$</td>
+                          </tr>
+                          <tr><td></td><td></td></tr>
+                        </tbody>
+                      </table>
+                      <div class="col-6 mx-auto">
+                        <p class="col-12">Situação do pedido: <span>Confirmado</span></p>
+                        <div class="col-12 d-flex justify-content-around align-items-center">
+                          <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Situação
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              <a class="dropdown-item" href="#">Em andamento</a>
+                              <a class="dropdown-item" href="#">Enviado</a>
+                              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modificacaoIndagacao">Entregue</a>
+                            </div>
+                          </div>
+                          <button id="cancelarPedidoAtendente" type="button" class="btn btn-dark">Cancelar pedido</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal - Mensagem para modificação do pedido -->
+        <div class="modal fade" id="modificacaoIndagacao" tabindex="-1" role="dialog" aria-labelledby="modificacaoIndagacaoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="modificacaoIndagacaoTitle"></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="p-4">
+                <h5>Esse pedido já foi modificado para: “entregue”. Tem certeza que deseja modificar o seu estado novamente?</h5><br>
+              </div>
+              <div class="d-flex justify-content-between w-50 mx-auto">
+                <button id="" type="button" class="btn btn-secondary m-3" data-dismiss="modal" data-toggle="modal" data-target="#itemExcluido">Sim</button>
+                <button id="" type="button" class="btn btn-secondary m-3" data-dismiss="modal">Não</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal - Pedido cancelado -->
+        <div class="modal fade" id="pedidoCancelado" tabindex="-1" role="dialog" aria-labelledby="pedidoCanceladoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="pedidoCanceladoTitle">Pedido cancelado</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Desculpe, este pedido foi cancelado.
+              </div>
+              <div class="d-flex justify-content-end">
+                <button id="encomendarPedido" type="button" class="btn btn-secondary col-2 m-3" data-dismiss="modal">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal - Lista de pedidos que aguardam reembolso -->
+        <div class="modal fade" id="pedidosReembolso" tabindex="-1" role="dialog" aria-labelledby="pedidosReembolsoTitle" aria-hidden="true">
+          <div class="modal-dialog  modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="pedidosReembolsoTitle">Pedidos que aguardam reembolso</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body text-center">
+                <!-- <table class="table">
                   <thead>
                     <tr>
-                      <th scope="col">Desconto</th>
-                      <th scope="col">Total Pago</th>
+                      <th class="" scope="col">Pedido</th>
+                      <th scope="col">Cliente</th>
+                      <th class="w-25" scope="col">Motivo</th>
+                      <th scope="col">Valor</th>
+                      <th scope="col">Reembolsar</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>10%</td>
-                      <td>25,20 R$</td>
+                      <td>00001</td>
+                      <td>João da Silva</td>
+                      <td>A vitamina demorou muito para ser preparada, resolvi comer outra coisa.</td>
+                      <td>R$ 7,00</td>
+                      <td><i class="fa-solid fa-sack-dollar" data-toggle="modal" data-target="#reembolsado"></i></td>
                     </tr>
-                    <tr><td></td><td></td></tr>
+                    <tr>
+                      <td>00002</td>
+                      <td>Marina Machado</td>
+                      <td>Não queria mais.</td>
+                      <td >R$ 40,00</td>
+                      <td><i class="fa-solid fa-sack-dollar" data-toggle="modal" data-target="#reembolsado"></i></td>
+                    </tr>
                   </tbody>
-                </table>
-                <div class="col-4 mx-auto d-flex justify-content-around align-items-center">
-                  <button id="prontoEntrega" type="button" class="btn btn-secondary mr-5" data-toggle="modal" data-target="#modalEndereco">Pronto</button>
-                  <button id="cancelarPedidoAtendente" type="button" class="btn btn-dark">Cancelar pedido</button>
-                </div>
+                </table> -->
+                <h2 class="p-5">Não existem pedidos cancelados que aguardam o reembolso.</h2>
               </div>
-              
+              <div class="d-flex justify-content-end">
+                <button id="encomendarPedido" type="button" class="btn btn-secondary col-2 m-3" data-dismiss="modal">Voltar</button>
+              </div>
             </div>
           </div>
-        </div> 
+        </div>
+
+        <!-- Modal - Reembolso realizado -->
+        <div class="modal fade" id="reembolsado" tabindex="-1" role="dialog" aria-labelledby="reembolsadoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-cinza">
+              <div class="modal-header bg-dark">
+                <h5 class="modal-title text-white" id="reembolsadoTitle"></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="p-4">
+                <h5>Reembolso realizado</h5><br>
+              </div>
+              <div class="w-100 d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary mx-4 mb-4" data-dismiss="modal">Voltar</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Tabela com todos os pedidos (Modelo) -->
-        <section class="container-fluid w-100 px-5 py-3 text-center">
+        <section class=" container-middle px-5 py-3 text-center">
             <table class="table">
                 <thead>
                   <tr>
@@ -127,68 +290,26 @@
                     <th scope="col">Data/hora</th>
                     <th scope="col">Valor</th>
                     <th scope="col">Detalhes</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Situção</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <!-- Inserção dos pedidos de forma dinâmica. Dados presentes no momento apenas para visualização -->
+                <tbody id="produtosTbody">
+
                   <tr>
-                    <td>00001</td>
-                    <td>João da Silva</td>
-                    <td>22/03/22 às 20:02</td>
-                    <td>7,00 R$</td>
-                    <td><img src="plus-solid.svg" class="icons-sacola"></td>
-                    <td>Confirmado</td>
-                  </tr>
-                  <tr>
-                    <td>00002</td>
-                    <td>Antônio Ribeira</td>
-                    <td>22/03/22 às 23:04</td>
-                    <td>20,00 R$</td>
-                    <td><img src="plus-solid.svg" class="icons-sacola"></td>
-                    <td>Enviado</td>
-                  </tr>
-                  <tr>
-                    <td>00003</td>
-                    <td>Felipe Leonardo</td>
-                    <td>20/03/22 às 21:04</td>
-                    <td>40,00 R$</td>
-                    <td><img src="plus-solid.svg" class="icons-sacola"></td>
-                    <td>Enviado</td>
-                  </tr>
-                  <tr>
-                    <td>00004</td>
-                    <td>Silva Melo</td>
-                    <td>22/03/22 às 23:07</td>
-                    <td>28,00 R$</td>
-                    <td><img src="plus-solid.svg" class="icons-sacola"></td>
-                    <td>Confirmado</td>
-                  </tr>
-                  <tr>
-                    <td>00005</td>
-                    <td>Leandro Escobar</td>
-                    <td>22/03/22 às 21:44</td>
-                    <td>6,00 R$</td>
-                    <td><img src="plus-solid.svg" class="icons-sacola"></td>
-                    <td>Em andamento</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                   </tr>
                 </tbody>
             </table>
-              <!-- Modelo de resultado para busca por situação e data (quando não existem pedidos para a mesma informada) da funcionalidade: "consultar pedidos confirmados por data quando não há pedidos nessa situação informada" dos critérios de aceite do Consultar Pedido -->
-              <!-- <div class="n-funcioando d-flex justify-content-center flex-column text-center">-->
-                <!-- dentro do span vai a situação informada na hora da busca (se for mais de uma coloca "ou" entre as palavras e se for "todas" coloca nada)-->
-                <!--<div class="">Nenhum pedido <span></span> nesta data informada. </div>
-              </div> -->
-              
-              <!-- Modelo segundo a funcionalidade "Nenhum pedido confirmado para a data de hoje" dos critérios de aceite do Consultar Pedido -->
-              <!-- <div class="n-funcioando d-flex justify-content-center flex-column text-center">
-                <div class="">Não existem pedidos confirmados até o momento para hoje (23/03/2022 às 20:45)</div>
-              </div> -->
         </section>
 
 		
+    <script language="javascript" src="jquery-3.6.0.js"></script>
     <script src="consultarpedido.js"></script>
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	</body>
