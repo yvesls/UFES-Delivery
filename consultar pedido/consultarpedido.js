@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
-   
-    const template_url = "http://127.0.0.1:5000"
+   //34.125.171.237:5000
+    const template_url = "http://localhost:5000"
 
     async function fazerReq (url, tipo, conteudo) {
         try {
@@ -87,6 +87,7 @@ $(document).ready(() => {
                 let insereHorario = document.getElementById("dataEHora");
                 let horario = data.getDay() + " " + insereZeroNoHora(data.getHours())+ data.getHours() +":"+ insereZeroNoMinuto(data.getMinutes())+data.getMinutes();
                 $(insereHorario).html(data.getDate() +" "+ modelaMes(data.getMonth()) +" "+ insereZeroNoHora(data.getHours())+ data.getHours() +":"+ insereZeroNoMinuto(data.getMinutes())+data.getMinutes());
+                
                 return horario;
             }setInterval(dataEHora, 1000)
 
@@ -134,9 +135,9 @@ $(document).ready(() => {
                                     })
                                 }getDadosUsuario()
 
-                                mes = pedido[i].dt_inicio.mes.toString()
-                                hora = pedido[i].dt_inicio.hora.toString()
-                                minuto = pedido[i].dt_inicio.minuto.toString()
+                                mes = pedido[i].dt_ultima_alteracao.mes.toString()
+                                hora = pedido[i].dt_ultima_alteracao.hora.toString()
+                                minuto = pedido[i].dt_ultima_alteracao.minuto.toString()
 
                                 if(mes.length < 2)
                                     mes = "0"+ mes
@@ -168,6 +169,56 @@ $(document).ready(() => {
                     }
                 })
             }resgataPedido()
+
+            $(document.getElementById("buscarPedidos")).on("click", buscaPorDataETipo);
+            
+            async function buscaPorDataETipo() {
+                // let data = new Date;
+                
+                // console.log(data)
+                let inicio = document.getElementById("inicioBusca").value, fim = document.getElementById("fimBusca").value;
+                // let emAndamento = document.getElementById("EA").checked;
+                // let confirmado = document.getElementById("CF").checked;
+                // let enviados = document.getElementById("EV").checked;
+                // let cancelados = document.getElementById("CA").checked;
+                // let todos = document.getElementById("TD").checked;
+                // emAndamento || confirmado || enviados || cancelados || todos && 
+
+                if (fim == ''){
+                    fim = inicio
+                    // `${data.getFullYear()}-${insereZeroNoHora(data.getMonth())+parseInt(data.getMonth()+1)}-${insereZeroNoHora(data.getDate())+data.getDate()}`
+                }
+                if(inicio != '') {
+                    // console.log(inicio, fim)
+                    let anoIn = inicio.slice(0, 4)
+                    let mesIn = inicio.slice(5, 7)
+                    let diaIn = inicio.slice(8, 10)
+
+                    let anoFin = fim.slice(0, 4)
+                    let mesFin = fim.slice(5, 7)
+                    let diaFin = fim.slice(8, 10)
+
+                    // console.log(mes)
+                    let jsonInicio = {
+                        "dt_min_ultima_alteracao" : {
+                            "dia": parseInt(diaIn),
+                            "mes": parseInt(mesIn),
+                            "ano": parseInt(anoIn)
+                        },
+                        "dt_max_ultima_alteracao" : {
+                            "dia": parseInt(diaFin)+1,
+                            "mes": parseInt(mesFin),
+                            "ano": parseInt(anoFin)
+                        }, 
+                        "cd_status": 1
+                              
+                    }
+                    console.log(jsonInicio)
+                    await fazerReq("/order/get", "POST", jsonInicio).then((pedido)=>{
+                        console.log(pedido)
+                    })
+                }
+            }
             
         })
         
