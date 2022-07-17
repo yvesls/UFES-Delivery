@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
-   //34.125.171.237:5000
     const template_url = "http://localhost:5000"
+
 
     async function fazerReq (url, tipo, conteudo) {
         try {
