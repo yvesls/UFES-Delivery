@@ -1,6 +1,6 @@
 $(document).ready(() => {
 
-    const template_url = "http://127.0.0.1:5000"
+    const template_url = "https://34.125.171.237:5000"
     
     async function fazerReq (url, tipo, conteudo) {
         try {
@@ -47,21 +47,27 @@ $(document).ready(() => {
             
             async function getAtendente(){
                     await fazerReq("/user/get/client/1", "GET").then((atendente)=>{
+                        let span = document.createElement("span")
                         let option = document.createElement("option")
+                        $(span).html(atendente.no_usuario)
                         $(option).html(`<div class="dropdown-item" id="atendente">${atendente.cd_usuario}</div>`)
-                    $(select).append(option);
+                        $(select).append(option);
+                        $(select).append(span);
                 })
             }getAtendente()
 
             document.getElementById("registrarNovoUser").onclick = function(){criarUser()};
 
             async function criarUser(){
-                let logradouro, bairro, numero, cep, complemento, endereco;
+                let logradouro, bairro, numero, cep, complemento, enderecoCriado, email, nome, senha;
                 logradouro = $("#regLogradouro").val()
                 bairro = $("#regBairro").val()
                 numero = $("#regNumero").val()
                 cep = $("#regCep").val()
                 complemento = $("#regComplemento").val()
+                email = $("#regEmail").val()
+                nome = $("#regNome").val()
+                senha = $("#regSenha").val()
                 
                 jsonEndereco = {
                     cd_cidade: 1,
@@ -72,9 +78,22 @@ $(document).ready(() => {
                     ds_complemento: complemento
                 }
 
-                console.log(jsonEndereco)
                 await fazerReq("/address/new", "POST", jsonEndereco).then((endereco)=>{
-                    console.log(endereco)
+                    enderecoCriado = endereco
+                })
+            
+                jsonCliente = {
+                    cd_endereco: enderecoCriado,
+                    email_usuario: email,
+                    nome_usuario: nome,
+                    senha_usuario: senha,
+                    tipo_usuario: 1,
+                    email_adm: null,
+                    senha_adm: null
+                }
+
+                await fazerReq("/user/new", "POST", jsonCliente).then(()=>{
+                    location.replace("index.html")
                 })
             }
 
@@ -177,7 +196,7 @@ $(document).ready(() => {
                                 let hora = verificaHorarioFunc.slice(2, 4)
                                 let dia = verificaHorarioFunc.slice(0, 2)
             
-                                if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
+                                if (produtos != -1 && qtdProdutos != 0 && parseInt(dia) == 1 && (parseInt(hora) >= 15) && tratamentoPersonalizado == false) { // && trataObjeto(request.responseText)[1].length != 0 && parseInt(dia) != 1 && (parseInt(hora) >= 15 && parseInt(hora) != 0)
                                     $(document.getElementById("tabela")).removeClass("dis-none");
                                     $(document.getElementsByClassName("container-bottom")).addClass("d-flex");
                                     
@@ -229,11 +248,8 @@ $(document).ready(() => {
                                         $("#produtosTbody").prepend(tr[i]) // insere linhas como filhos do corpo da tabela
                                         document.getElementById("tipoDesconto").innerHTML = descontos.tp_desconto;
                                         document.getElementById("desconto").innerHTML = descontos.vl_desconto +"%";
-                                        // document.getElementById("menos"+i).addEventListener("click", diminuirQtdDoPedido())
-                                        // document.getElementById("mais"+i).addEventListener("click", aumentarQtdDoPedido())
-            
+                                        
                                     } 
-        
                                 }else if(produtos != -1 || parseInt(dia) == 1 || (parseInt(hora) < 15)){
                                     $(document.getElementById("lojaFechada")).addClass("d-flex");
                                     $(document.getElementById("nFunHorarioEDia")).css("display", "block");
@@ -394,12 +410,33 @@ $(document).ready(() => {
         
                                 // resgata o endereço e exibe na janela de pagamento e janela de resumo do pedido
                                 async function getEndereco(){
-                                    let usuario = {
-                                        "cd_usuario":dadosUsuario.cd_usuario,
-                                        "ds_email":'MARIA.w@GMAIL.COM',
-                                        "cd_senha":123111332,
-                                        "cd_token": null
+                                    let usuario
+                                    if(dadosUsuario.cd_usuario == 2){
+                                        usuario = {
+                                            "cd_usuario":dadosUsuario.cd_usuario,
+                                            "ds_email":'LUCIO.PENA@GMAIL.COM',
+                                            "cd_senha": 12345678,
+                                            "cd_token": null
+                                        }
                                     }
+                                    if(dadosUsuario.cd_usuario == 3){
+                                        usuario = {
+                                            "cd_usuario":dadosUsuario.cd_usuario,
+                                            "ds_email":'SEU.JORGE@GMAIL.COM',
+                                            "cd_senha": 123456789,
+                                            "cd_token": null
+                                        }
+                                    }
+
+                                    if(dadosUsuario.cd_usuario == 4){
+                                        usuario = {
+                                            "cd_usuario":dadosUsuario.cd_usuario,
+                                            "ds_email":'ROS.REGINALDO@GMAIL.COM',
+                                            "cd_senha": 12345678911,
+                                            "cd_token": null
+                                        }
+                                    }
+
                                     await fazerReq("/user/get/address", "POST", usuario).then((endereco)=>{
                                         let cidade
                                         // console.log(endereco)
@@ -427,7 +464,11 @@ $(document).ready(() => {
                                 
                                 // função que trata a criação do pedido e retorna o resumo do pedido
                                 async function encomendarPedido(){
-                                   
+                                    let modalSucesso = document.getElementById("encomendarPedido");
+                                    $(modalSucesso).attr("data-target", "#resumoPedido")
+                                    $(modalSucesso).attr("data-dismiss", "modal")
+                                    $(modalSucesso).attr("data-toggle", "modal")
+                                    $("#totalPagoResumo").html(document.getElementById("totalAPagarCDescontoPagamento").innerHTML = vlTotalCDesc.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }))
                                     let pagamentoConcluido = true;
                                     let k, cdPedido
                                     if(pagamentoConcluido){
@@ -440,10 +481,7 @@ $(document).ready(() => {
                                         // console.log(jsonPedido)
                                         await fazerReq("/order/new", "POST", jsonPedido).then(()=>{
                                             
-                                            let modalSucesso = document.getElementById("encomendarPedido");
-                                            $(modalSucesso).attr("data-target", "#resumoPedido")
-                                            $(modalSucesso).attr("data-dismiss", "modal")
-                                            $(modalSucesso).attr("data-toggle", "modal")
+                                            
         
                                             // resgatar itens do pedido e inserir no banco de dados 
         

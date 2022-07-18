@@ -1,7 +1,7 @@
 $(document).ready(() => {
 
-    const template_url = "http://localhost:5000"
-
+    // https://34.125.171.237:5000
+    const template_url = "https://34.125.171.237:5000"
 
     async function fazerReq (url, tipo, conteudo) {
         try {
@@ -109,13 +109,12 @@ $(document).ready(() => {
 
             async function resgataPedido(){
                 await fazerReq("/order/get/all", "GET").then((pedido)=>{
-                    let situacao, qtdPedidos, mes, hora, minuto
                     console.log(pedido)
 
-                    qtdPedidos = pedido.length
+                    if(pedido){
+                        let situacao, qtdPedidos, mes, hora, minuto
+                        qtdPedidos = pedido.length
 
-                    if(qtdPedidos != 0){
-                        
                         for(i = 0; i < qtdPedidos; i++){
                             if(pedido[i].cd_status == 1){
                                 situacao = "confirmado"
@@ -166,6 +165,17 @@ $(document).ready(() => {
                                 $("#produtosTbody").prepend(tr[i]) 
                             }
                         } 
+                    }else {
+                        if($("#nEncontrado")){
+                            $("#nEncontrado").remove()
+                        }
+                        
+                        let div = document.createElement("div")
+                        $(div).addClass("n-funcioando")
+                        console.log($("#nEncontrado"))
+                        $(div).attr("id", "nEncontrado")
+                        $(div).html("Não há nenhum pedido registrado para o dia de hoje.")
+                        $("#container-middle").append(div) 
                     }
                 })
             }resgataPedido()
@@ -177,28 +187,40 @@ $(document).ready(() => {
                 
                 // console.log(data)
                 let inicio = document.getElementById("inicioBusca").value, fim = document.getElementById("fimBusca").value;
-                // let emAndamento = document.getElementById("EA").checked;
-                // let confirmado = document.getElementById("CF").checked;
-                // let enviados = document.getElementById("EV").checked;
-                // let cancelados = document.getElementById("CA").checked;
-                // let todos = document.getElementById("TD").checked;
-                // emAndamento || confirmado || enviados || cancelados || todos && 
+                let emAndamento = document.getElementById("EA").checked;
+                let confirmado = document.getElementById("CF").checked;
+                let enviados = document.getElementById("EV").checked;
+                let cancelados = document.getElementById("CA").checked;
+                let todos = document.getElementById("TD").checked;
+                // 
 
                 if (fim == ''){
                     fim = inicio
                     // `${data.getFullYear()}-${insereZeroNoHora(data.getMonth())+parseInt(data.getMonth()+1)}-${insereZeroNoHora(data.getDate())+data.getDate()}`
                 }
                 if(inicio != '') {
+                    let status = 2
+                    if(confirmado || todos){
+                        status = 1
+                    }
+                    
                     // console.log(inicio, fim)
                     let anoIn = inicio.slice(0, 4)
                     let mesIn = inicio.slice(5, 7)
                     let diaIn = inicio.slice(8, 10)
 
                     let anoFin = fim.slice(0, 4)
-                    let mesFin = fim.slice(5, 7)
-                    let diaFin = fim.slice(8, 10)
+                    let mesFin = parseInt(fim.slice(5, 7))
+                    let diaFin = parseInt(fim.slice(8, 10))+1
 
-                    // console.log(mes)
+                    if((mesFin == 1 || mesFin == 3 || mesFin == 5 || mesFin == 7 || mesFin == 8 || mesFin == 10 || mesFin == 12) && diaFin == 31){
+                        diaFin = 1;
+                        mesFin ++;
+                    }else if(diaFin == 30){
+                        diaFin = 1;
+                        mesFin ++;
+                    }
+
                     let jsonInicio = {
                         "dt_min_ultima_alteracao" : {
                             "dia": parseInt(diaIn),
@@ -206,22 +228,97 @@ $(document).ready(() => {
                             "ano": parseInt(anoIn)
                         },
                         "dt_max_ultima_alteracao" : {
-                            "dia": parseInt(diaFin)+1,
+                            "dia": parseInt(diaFin),
                             "mes": parseInt(mesFin),
                             "ano": parseInt(anoFin)
                         }, 
-                        "cd_status": 1
-                              
+                        "cd_status": status
                     }
-                    console.log(jsonInicio)
+                    
                     await fazerReq("/order/get", "POST", jsonInicio).then((pedido)=>{
-                        console.log(pedido)
+                        $("#produtosTbody").html('')
+                        //console.log(qtdPedidos)
+                        //console.log(pedido)
+                        if(pedido){
+                            if($("#nEncontrado")){
+                                $("#nEncontrado").remove()
+                            }
+                            
+                            let situacao, mes, hora, minuto
+                            let qtdPedidos = pedido.length
+
+                            for(i = 0; i < qtdPedidos; i++){
+                                //console.log(pedido[i].cd_status)
+                                if(pedido[i].cd_status == 1){
+                                    //console.log(pedido[i].cd_status)
+                                    situacao = "confirmado"
+                                    let j = 0, td = [], tr = [];
+                                    tr[i] = document.createElement("TR") // cria linha da tabela
+    
+                                    while(j != 6){
+                                        td[j] = document.createElement("Td") // 6 colunas da tabela para cada linha
+                                        j++
+                                    }
+    
+                                    $(td[0]).html(pedido[i].cd_pedido); // nomes dos produtos
+    
+                                    async function getDadosUsuario(){
+                                        await fazerReq(`/user/get/client/${pedido[i].cd_usuario}`, 'GET').then((dadosUsuario)=>{
+                                            $(td[1]).html(dadosUsuario.no_usuario)
+                                        })
+                                    }getDadosUsuario()
+    
+                                    mes = pedido[i].dt_ultima_alteracao.mes.toString()
+                                    hora = pedido[i].dt_ultima_alteracao.hora.toString()
+                                    minuto = pedido[i].dt_ultima_alteracao.minuto.toString()
+    
+                                    if(mes.length < 2)
+                                        mes = "0"+ mes
+                                    if(hora.length < 2)
+                                        hora = "0"+ hora
+                                    if(minuto.length < 2)
+                                        minuto = "0"+ minuto
+    
+                                    $(td[2]).html(`${pedido[i].dt_inicio.dia}/${mes}/${pedido[i].dt_inicio.ano} às ${hora}:${minuto}`);
+                                    
+                                    $(td[3]).html(pedido[i].vl_total_compra.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+                                    
+                                    $(td[4]).append('<img src="imagens/plus-solid.svg" class="icons-sacola" data-toggle="modal" data-target="#pedidoCancelado">'); 
+    
+                                    $(td[5]).html(situacao)
+    
+                                    $(tr[i]).append(td[0]) // insere coluna como filho da linha
+                                    $(tr[i]).append(td[1])
+                                    $(tr[i]).append(td[2])
+                                    $(tr[i]).append(td[3])
+                                    $(tr[i]).append(td[4])
+                                    $(tr[i]).append(td[5])
+    
+                                    //console.log(tr[i])
+    
+                                    $("#produtosTbody").prepend(tr[i]) 
+                                }
+                            } 
+                        } else {
+                            if($("#nEncontrado")){
+                                $("#nEncontrado").remove()
+                            }
+                            
+                            let div = document.createElement("div")
+                            $(div).addClass("n-funcioando")
+                            console.log($("#nEncontrado"))
+                            $(div).attr("id", "nEncontrado")
+                            $(div).html("Não possui pedidos de acordo com a data informada.")
+                            $("#container-middle").append(div) 
+                        }
                     })
                 }
             }
-            
         })
         
+        $("#voltar").on("click", ()=>{
+            location.replace("/UFES-Delivery/index.html")
+        })
 
 
 

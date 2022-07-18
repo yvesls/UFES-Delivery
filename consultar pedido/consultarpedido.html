@@ -14,7 +14,7 @@
 		    <header class="w-100 mt-3">
           <div class=" d-flex justify-content-around mt-3">
             <a href="#" class="link-menu active">Consultar Pedido</a>
-            <a href="#" class="link-menu"></a>
+            <a id="voltar" class="link-menu">Voltar ao início</a>
             <a href="#"><img src="imagens/logo.png" alt=""></a>
             <a href="#" class="link-menu" data-toggle="modal" data-target="#pedidosReembolso">Reembolso</a>
             <a href="#" class="link-menu" data-toggle="modal" data-target="#notificacaoNovosPedidos"><img class="icons" src="imagens/bell-solid.svg"></a>
@@ -31,8 +31,8 @@
             <div class="">Data fim: <input id="fimBusca" class="bg-cinza-claro date-select p-1" type="date"/></div>
             <div class="d-flex justify-content-around">
                 <!-- campo onde exibe as opções selecionadas (confirmados padrão) -->
-                <div class="mr-3 pl-2 d-none" id="check-situacao">Todos<img src="imagens/caret-down-solid.svg" id="icon-situacao"><img id="icon-situacao-2" src="imagens/caret-up-solid.svg"></div>
-                <div class="form-select d-none select-checks" id="select-checks" aria-label="Default select example">
+                <div class="mr-3 pl-2" id="check-situacao">Todos<img src="imagens/caret-down-solid.svg" id="icon-situacao"><img id="icon-situacao-2" src="imagens/caret-up-solid.svg"></div>
+                <div class="form-select select-checks" id="select-checks" aria-label="Default select example">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="1" id="TD">
                     <label class="form-check-label" for="flexCheck1">
@@ -281,8 +281,8 @@
         </div>
 
         <!-- Tabela com todos os pedidos (Modelo) -->
-        <section class=" container-middle px-5 py-3 text-center">
-            <table class="table">
+        <section id="container-middle" class=" container-middle px-5 py-3 text-center">
+            <table class="table" >
                 <thead>
                   <tr>
                     <th scope="col">Pedido</th>
