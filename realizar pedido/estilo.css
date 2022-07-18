@@ -38,6 +38,17 @@
 			background: linear-gradient(to bottom, #015db3, #0574db); 
 		}
 
+		.carregando {
+			position: absolute;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			color: rgb(0, 0, 0);
+			font-size: 2em;
+			text-align: center;
+			z-index: 1;
+		}
+
 		.link-menu {
 			color: rgb(75, 75, 75);
 			padding: 5px 20px;

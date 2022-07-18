@@ -175,6 +175,26 @@
 			display: none;
 		}
 
+		#voltar {
+			cursor: pointer;
+		}
+
+		#voltar:hover {
+			color: green;
+		}
+
+		.carregando {
+			position: absolute;
+			top: 0;
+			width: 100vw;
+			height: 100vh;
+			color: rgb(0, 0, 0);
+			font-size: 2em;
+			text-align: center;
+			z-index: 1;
+		}
+
+
 		.select-checks {
 			background-color: #ececec;
 			position: absolute;

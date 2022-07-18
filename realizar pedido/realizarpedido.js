@@ -4,6 +4,7 @@ $(document).ready(() => {
     
     async function fazerReq (url, tipo, conteudo) {
         try {
+            $(".carregando").removeClass("d-none")
             return await fetch(`${template_url}${url}`, {
                 method: tipo, 
                 headers: {
@@ -15,7 +16,7 @@ $(document).ready(() => {
                 response.json()
                 
             ).then((data) => {
-
+                $(".carregando").addClass("d-none")
                 if (data.id_address){
                     return data.id_address
                 }else {
