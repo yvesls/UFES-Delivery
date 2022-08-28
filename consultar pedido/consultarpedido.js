@@ -1,26 +1,45 @@
 $(document).ready(() => {
 
-    // https://34.125.171.237:5000
-    const template_url = "https://34.125.171.237:5000"
+    //http://127.0.0.1:5000
+    //https://34.125.171.237:5000
+    const template_url = "http://127.0.0.1:5000"
 
     async function fazerReq (url, tipo, conteudo) {
-        try {
-            return await fetch(`${template_url}${url}`, {
-                method: tipo, 
-                headers: {
-                'Content-Type': "application/json"
-                }, 
-                body: JSON.stringify(conteudo)}
+        
+        $(".carregando").removeClass("d-none")
+        return await fetch(`${template_url}${url}`, {
+            method: tipo, 
+            headers: {
+            'Content-Type': "application/json"
+            }, 
+            body: JSON.stringify(conteudo)}
                 
-            ).then(response => 
-                response.json()
-                
-            ).then((data) => {
-                return data.result
-            })
-        } catch(e){
+            ).then(function(response) {
+                if(response.status >199 && response.status < 300){
+                    return response.json()
+                }else if(response.status == 400){ // o dado não foi encontrado
+                    return 400
+                }else if(response.status == 409){ // o dado já está cadastrado
+                    return 409
+                }else if(response.status >400 && response.status < 500){
+                    return 4
+                }else if(response.status >499 && response.status < 600){
+                    $("#body").on("click", exibeErro)
+                    $("#body").click()
+                    function exibeErro(){
+                        $("#body").attr("data-toggle", "modal");
+                        $("#body").attr("data-target", "#erro");
+                    }
+                }
+            }).then(function(data) {
+            $(".carregando").addClass("d-none")
+            console.log(data)
+            return data.result
+        }).catch((e)=>{
+            $(".carregando").addClass("d-none")
+            // console.log(e.status)
             console.log("Ocorreu algum erro:", e)
-        }
+        })
     }
 
     let checkDiv = document.getElementById("check-situacao")
@@ -45,13 +64,19 @@ $(document).ready(() => {
         
     }
                 
-
     async function rodaAplicacao(){
-        let usuario = 1;
+        let usuario = 1, users;
+
         await fazerReq(`/user/get/client/${usuario}`, 'GET').then((dadosUsuario)=>{
-            console.log(usuario)
+            
             let nomeUsuario = dadosUsuario.no_usuario;
             document.getElementById("nomeUsuario").innerHTML = nomeUsuario;
+
+            async function getAllUsers(){
+                await fazerReq(`/user/get/client/all`, 'GET').then((dadosUsuario)=>{
+                    users = dadosUsuario
+                })
+            }getAllUsers()
 
             function modelaMes(mes){
                 if(mes == 0){
@@ -107,72 +132,114 @@ $(document).ready(() => {
                 return h;
             }
 
+            function formataStatus(pedido, i){
+                console.log(pedido[i])
+                if(pedido[i].cd_status == 1){
+                    return "confirmado"
+                }else if(pedido[i].cd_status == 4){
+                    return "em andamento"
+                }else if(pedido[i].cd_status == 5){
+                    return "enviado"
+                }else if(pedido[i].cd_status == 6){
+                    return "cancelado"
+                }
+            }
+
+            async function mudaStatusPedido(cdPedido, cdUsuario){
+                let jsonPedido = {
+                        "cd_usuario": cdUsuario,
+                        "cd_pedido": cdPedido,
+                        "cd_status": 3,
+                        "ds_email":'adm@ufesdelivery.com.br',
+                        "cd_senha": "1234"
+                    }
+                await fazerReq("/order/update", "PATCH", jsonPedido)
+            }
+
+            async function exibeBusca(pedido, i, mes, hora, minuto, cliente){
+                let j = 0, td = [], tr = [];
+                    tr[i] = document.createElement("TR") // cria linha da tabela
+    
+                    while(j != 6){
+                        td[j] = document.createElement("Td") // 6 colunas da tabela para cada linha
+                        j++
+                    }
+                    
+                    $(td[0]).html(pedido[i].cd_pedido); // nomes dos produtos
+                    
+                    
+                    for(let j = 0; j<cliente.length; j++){
+                        
+                        //console.log(cliente[j].cd_usuario, pedido[i].cd_usuario)
+                        if (cliente[j].cd_usuario == pedido[i].cd_usuario){
+                            //mudaStatusPedido(pedido[i].cd_status, cliente[j].cd_usuario)
+                            $(td[1]).html(cliente[j].no_usuario)
+                        }
+                    }
+                    
+                    
+                    mes = pedido[i].dt_ultima_alteracao.mes.toString()
+                    hora = pedido[i].dt_ultima_alteracao.hora.toString()
+                    minuto = pedido[i].dt_ultima_alteracao.minuto.toString()
+                
+                    if(mes.length < 2)
+                        mes = "0"+ mes
+                    if(hora.length < 2)
+                        hora = "0"+ hora
+                    if(minuto.length < 2)
+                        minuto = "0"+ minuto
+
+                    $(td[2]).html(`${pedido[i].dt_ultima_alteracao.dia}/${mes}/${pedido[i].dt_ultima_alteracao.ano} às ${hora}:${minuto}`);
+                        
+                    $(td[3]).html(pedido[i].vl_total_compra.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
+                        
+                    $(td[4]).append('<img src="imagens/plus-solid.svg" class="icons-sacola" data-toggle="modal" data-target="#pedidoCancelado">'); 
+
+                    $(td[5]).html(formataStatus(pedido, i))
+
+                    $(tr[i]).append(td[0]) // insere coluna como filho da linha
+                    $(tr[i]).append(td[1])
+                    $(tr[i]).append(td[2])
+                    $(tr[i]).append(td[3])
+                    $(tr[i]).append(td[4])
+                    $(tr[i]).append(td[5])
+
+                    $("#produtosTbody").prepend(tr[i]) 
+                
+            }
+
             async function resgataPedido(){
                 await fazerReq("/order/get/all", "GET").then((pedido)=>{
-                    console.log(pedido)
+                    let diaAtual, mesAtual, anoAtual, qtdPedidosDia = 0;
+                    let data = new Date;
+                    let qtdPedidos, mes, hora, minuto;
+                    qtdPedidos = pedido.length
+                    diaAtual = data.getDate()
+                    mesAtual = data.getMonth()+1
+                    anoAtual = data.getFullYear()
 
-                    if(pedido){
-                        let situacao, qtdPedidos, mes, hora, minuto
-                        qtdPedidos = pedido.length
+                    for(i = 0; i < qtdPedidos; i++){
+                        //console.log(pedido[i])
+                        
+                        if(pedido[i].dt_ultima_alteracao.ano == anoAtual && pedido[i].dt_ultima_alteracao.dia == diaAtual && pedido[i].dt_ultima_alteracao.mes == mesAtual){
 
-                        for(i = 0; i < qtdPedidos; i++){
-                            if(pedido[i].cd_status == 1){
-                                situacao = "confirmado"
-                                let j = 0, td = [], tr = [];
-                                tr[i] = document.createElement("TR") // cria linha da tabela
-
-                                while(j != 6){
-                                    td[j] = document.createElement("Td") // 6 colunas da tabela para cada linha
-                                    j++
-                                }
-
-                                $(td[0]).html(pedido[i].cd_pedido); // nomes dos produtos
-
-                                async function getDadosUsuario(){
-                                    await fazerReq(`/user/get/client/${pedido[i].cd_usuario}`, 'GET').then((dadosUsuario)=>{
-                                        $(td[1]).html(dadosUsuario.no_usuario)
-                                    })
-                                }getDadosUsuario()
-
-                                mes = pedido[i].dt_ultima_alteracao.mes.toString()
-                                hora = pedido[i].dt_ultima_alteracao.hora.toString()
-                                minuto = pedido[i].dt_ultima_alteracao.minuto.toString()
-
-                                if(mes.length < 2)
-                                    mes = "0"+ mes
-                                if(hora.length < 2)
-                                    hora = "0"+ hora
-                                if(minuto.length < 2)
-                                    minuto = "0"+ minuto
-
-                                $(td[2]).html(`${pedido[i].dt_inicio.dia}/${mes}/${pedido[i].dt_inicio.ano} às ${hora}:${minuto}`);
-                                
-                                $(td[3]).html(pedido[i].vl_total_compra.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
-                                
-                                $(td[4]).append('<img src="imagens/plus-solid.svg" class="icons-sacola" data-toggle="modal" data-target="#pedidoCancelado">'); 
-
-                                $(td[5]).html(situacao)
-
-                                $(tr[i]).append(td[0]) // insere coluna como filho da linha
-                                $(tr[i]).append(td[1])
-                                $(tr[i]).append(td[2])
-                                $(tr[i]).append(td[3])
-                                $(tr[i]).append(td[4])
-                                $(tr[i]).append(td[5])
-
-                                console.log(tr[i])
-
-                                $("#produtosTbody").prepend(tr[i]) 
+                            if(pedido[i].cd_status == 1){  
+                                mudaStatusPedido(pedido[i].cd_pedido, pedido[i].cd_usuario)
                             }
-                        } 
-                    }else {
+    
+                            if(pedido[i].cd_status == 1){
+                                exibeBusca(pedido, i, mes, hora, minuto, users)
+                            }
+                            qtdPedidosDia++
+                        }
+                    }
+                    if(qtdPedidosDia == 0) {
                         if($("#nEncontrado")){
                             $("#nEncontrado").remove()
                         }
                         
                         let div = document.createElement("div")
                         $(div).addClass("n-funcioando")
-                        console.log($("#nEncontrado"))
                         $(div).attr("id", "nEncontrado")
                         $(div).html("Não há nenhum pedido registrado para o dia de hoje.")
                         $("#container-middle").append(div) 
@@ -198,7 +265,7 @@ $(document).ready(() => {
                     fim = inicio
                     // `${data.getFullYear()}-${insereZeroNoHora(data.getMonth())+parseInt(data.getMonth()+1)}-${insereZeroNoHora(data.getDate())+data.getDate()}`
                 }
-                if(inicio != '') {
+                if((todos || confirmado|| cancelados || enviados || emAndamento) && inicio != '') {
                     let status = 2
                     if(confirmado || todos){
                         status = 1
@@ -234,70 +301,25 @@ $(document).ready(() => {
                         }, 
                         "cd_status": status
                     }
+
+                    //console.log(jsonInicio)
                     
                     await fazerReq("/order/get", "POST", jsonInicio).then((pedido)=>{
                         $("#produtosTbody").html('')
                         //console.log(qtdPedidos)
                         //console.log(pedido)
+                        
                         if(pedido){
                             if($("#nEncontrado")){
                                 $("#nEncontrado").remove()
                             }
                             
-                            let situacao, mes, hora, minuto
+                            let mes, hora, minuto
                             let qtdPedidos = pedido.length
 
                             for(i = 0; i < qtdPedidos; i++){
-                                //console.log(pedido[i].cd_status)
-                                if(pedido[i].cd_status == 1){
-                                    //console.log(pedido[i].cd_status)
-                                    situacao = "confirmado"
-                                    let j = 0, td = [], tr = [];
-                                    tr[i] = document.createElement("TR") // cria linha da tabela
-    
-                                    while(j != 6){
-                                        td[j] = document.createElement("Td") // 6 colunas da tabela para cada linha
-                                        j++
-                                    }
-    
-                                    $(td[0]).html(pedido[i].cd_pedido); // nomes dos produtos
-    
-                                    async function getDadosUsuario(){
-                                        await fazerReq(`/user/get/client/${pedido[i].cd_usuario}`, 'GET').then((dadosUsuario)=>{
-                                            $(td[1]).html(dadosUsuario.no_usuario)
-                                        })
-                                    }getDadosUsuario()
-    
-                                    mes = pedido[i].dt_ultima_alteracao.mes.toString()
-                                    hora = pedido[i].dt_ultima_alteracao.hora.toString()
-                                    minuto = pedido[i].dt_ultima_alteracao.minuto.toString()
-    
-                                    if(mes.length < 2)
-                                        mes = "0"+ mes
-                                    if(hora.length < 2)
-                                        hora = "0"+ hora
-                                    if(minuto.length < 2)
-                                        minuto = "0"+ minuto
-    
-                                    $(td[2]).html(`${pedido[i].dt_inicio.dia}/${mes}/${pedido[i].dt_inicio.ano} às ${hora}:${minuto}`);
-                                    
-                                    $(td[3]).html(pedido[i].vl_total_compra.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
-                                    
-                                    $(td[4]).append('<img src="imagens/plus-solid.svg" class="icons-sacola" data-toggle="modal" data-target="#pedidoCancelado">'); 
-    
-                                    $(td[5]).html(situacao)
-    
-                                    $(tr[i]).append(td[0]) // insere coluna como filho da linha
-                                    $(tr[i]).append(td[1])
-                                    $(tr[i]).append(td[2])
-                                    $(tr[i]).append(td[3])
-                                    $(tr[i]).append(td[4])
-                                    $(tr[i]).append(td[5])
-    
-                                    //console.log(tr[i])
-    
-                                    $("#produtosTbody").prepend(tr[i]) 
-                                }
+                                exibeBusca(pedido, i, mes, hora, minuto, users)
+                                
                             } 
                         } else {
                             if($("#nEncontrado")){
@@ -319,8 +341,6 @@ $(document).ready(() => {
         $("#voltar").on("click", ()=>{
             location.replace("/UFES-Delivery/index.html")
         })
-
-
 
     }rodaAplicacao()
 })
